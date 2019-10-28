@@ -26,6 +26,9 @@ var Info = mongoose.model('Info', InfoSchema);
 
 // Endpoints
 app.get('/', function(req, res) {
+	res.send('Working !')
+})
+app.get('/home', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
