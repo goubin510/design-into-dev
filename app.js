@@ -5,12 +5,16 @@ var express = require('express'),
 	path = require('path'),
 
 	app = express(),
-	port = process.env.PORT || 8080,
+	port = process.env.PORT || 3000,
 	Schema = mongoose.Schema;
+
+// body parser set up
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Mongoose connection set up
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb+srv://Writer:3WdpnAqvDvGZb6BA@onlinedata-xzwiw.mongodb.net/OnlineData', { useUnifiedTopology: true}, {useNewUrlParser: true });
+mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92');
 
 var InfoSchema = new Schema({
   name: {
