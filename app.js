@@ -14,16 +14,36 @@ app.use(bodyParser.json());
 
 // Mongoose connection set up
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92');
+mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92', { useNewUrlParser: true });
 
 var InfoSchema = new Schema({
-  name: {
+  description: {
     type: String,
-    required: 'Kindly enter the name of the intel',
-    unique: true
+    required: 'Kindly enter the description of the spent'
+  },
+  amount: {
+  	type: Number,
+  	required: 'Set an amount please'
+  },
+  date: {
+  	type: Date,
+  	default: Date.now
+  },
+  category: {
+  	type: String,
+  },
+  identificationStr: {
+  	type: String,
+  	required: 'Please set a passphrase'
   }
 });
 var Info = mongoose.model('Info', InfoSchema);
+
+Info.deleteMany({}, function(err, info) {
+	if (err)
+		res.send(err);
+	console.log('Infos successfully deleted');
+});
 
 
 // Endpoints
@@ -35,16 +55,24 @@ app.get('/home', function(req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
 
-app.get('/:data', function (req, res) {
-  	// res.send(req.params.data)
+app.get('/data/:data', function (req, res) {
+	Info.find({identificationStr: req.params.data}, function(err, info) {
+		if (err)
+			res.send(err);
+			res.json(info);
+	});
+})
 
-  	var Obj = {name: req.params.data};
-  	var insert = new Info(Obj);
-		insert.save(function(err, info) {
-			if (err)
-				res.send(err);
-				res.json(info);
-		});
+app.post('/data', function(req, res) {
+	res.send(JSON.stringify(req.body));
+
+  // 	var Obj = {name: req.params.data};
+  // 	var insert = new Info(Obj);
+		// insert.save(function(err, info) {
+		// 	if (err)
+		// 		res.send(err);
+		// 		res.json(info);
+		// });
 })
 
 app.use(function(req, res) {
