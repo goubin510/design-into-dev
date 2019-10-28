@@ -1,7 +1,7 @@
 {
   "name": "design-into-dev",
   "version": "0.0.1",
-  "description": "\"# design-into-dev\" \r \"Design-into-dev\"",
+  "description": "Design into Dev website project pages and API ressources",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
