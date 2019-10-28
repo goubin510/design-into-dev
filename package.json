@@ -1,13 +1,21 @@
 {
   "name": "design-into-dev",
   "version": "0.0.1",
-  "description": "Design into Dev website project pages and API ressources",
+  "description": "\"# design-into-dev\" \r \"Design-into-dev\"",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goubin510/design-into-dev.git"
+  },
   "author": "Goubin510",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/goubin510/design-into-dev/issues"
+  },
+  "homepage": "https://github.com/goubin510/design-into-dev#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
