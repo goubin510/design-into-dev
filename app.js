@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 // Mongoose connection set up
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92');
+mongoose.connect('mongodb+srv://Writer:3WdpnAqvDvGZb6BA@onlinedata-xzwiw.mongodb.net/OnlineData');
 
 var InfoSchema = new Schema({
   name: {
