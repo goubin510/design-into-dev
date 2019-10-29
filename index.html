@@ -40,48 +40,111 @@
 			<label for="amount">Amount:</label>
 			<input type="text" class="form-control" id="amount">
 
-			<label for="sel1">Category</label>
-			<select class="form-control" id="sel1" name="sellist1">
+			<label for="category">Category:</label>
+			<select class="form-control" id="category" name="sellist1">
 				<option>Desires</option>
 				<option>Savings</option>
 				<option>Needs</option>
+				<option>Revenue</option>
 			</select>
 
 			<button class="btn btn-primary" id="send">Add</button>
+		</div>
+
+		<div class="col">
+			<h1>Results :</h1>
+
+			<p>
+				Desires : <strong id="desiresValue"></strong>
+				 (<light id="desiresRatio"></light>% )</p>
+			<p>
+				Savings : <strong id="savingsValue"></strong>
+				 (<light id="savingsRatio"></light>% )</p>
+			<p>
+				Needs : <strong id="needsValue"></strong>
+				 (<light id="needsRatio"></light>% )</p>
+			<p>
+				Revenue : <strong id="revenueValue"></strong>
+				 (<light id="revenueRatio"></light>% )</p>
 		</div>
 	</div>
 
 </body>
 <script type="text/javascript">
-	console.log("Hello world !");
-
-	$.get("/", function(data){
-		console.log("Data: " + data);
-	});
+	// $.get("/", function(data){
+	// 	console.log("Data: " + data);
+	// });
 
 	$("#getInfo").click(function(){
-		console.log('getInfo')
+		var total = [], logs = [];
+
+		logs [0] = [];
+		logs [1] = [];
+		logs [2] = [];
+		logs [3] = [];
+		total [0] = 0;
+		total [1] = 0;
+		total [2] = 0;
+		total [3] = 0;
+
+		$.post("/", {identificationStr: $("#pwd").val()}, function(data){
+			for (var i = 0; i < data.length; i++) {
+
+				var phrase = data[i].description + " : " + data[i].amount + "(" + data[i].category + " - " + data[i].date + ")";
+
+				switch (data[i].category) {
+					case 'Desires':
+						total[0] += data[i].amount;
+						logs[0].push(phrase)
+					break;
+					case 'Savings':
+						total[1] += data[i].amount;
+						logs[1].push(phrase)
+					break;
+					case 'Needs':
+						total[2] += data[i].amount;
+						logs[2].push(phrase)
+					break;
+					case 'Revenue':
+						total[3] += data[i].amount;
+						logs[3].push(phrase)
+					break;
+				}
+			}
+			console.log(total)
+			console.log(logs)
+
+			$("#desiresValue").text(total[0])
+			$("#savingsValue").text(total[1])
+			$("#needsValue").text(total[2])
+			$("#revenueValue").text(total[3])
+
+			var spent = total[0] + total[1] + total[2];
+			
+			var ratio = [];
+			ratio.push(100 * total[0] / spent)
+			ratio.push(100 * total[1] / spent)
+			ratio.push(100 * total[2] / spent)
+			ratio.push(100 * spent / total[3])
+
+			$("#desiresRatio").text(ratio[0].toFixed(2))
+			$("#savingsRatio").text(ratio[1].toFixed(2))
+			$("#needsRatio").text(ratio[2].toFixed(2))
+			$("#revenueRatio").text(ratio[3].toFixed(2))
+		});
 	});
 
 	$("#send").click(function(){
-		console.log('send')
-	});
+		var json = {};
+		json.description = $("#amountDesc").val();
+		json.amount = $("#amount").val();
+		json.category = $("#category").val();
+		json.identificationStr = $("#pwd").val();
 
-	$.post("/data",
-	{
-		"description": 'plop',
-		"amount": 'plop',
-		"category": 'plop',
-		"identificationStr": 'plop'
-	},
-	function(data, status){
-		console.log("Data: " + data);
+		$.post("/data", json,
+		function(res){
+			console.log("Response: " + res);
+		});
 	});
-
-// description
-// amount
-// date
-// category
-// identificationStr
 </script>
 </html>

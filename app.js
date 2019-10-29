@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 // Mongoose connection set up
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92', { useNewUrlParser: true });
+mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92', { useNewUrlParser: true, useCreateIndex: true });
 
 var InfoSchema = new Schema({
   description: {
@@ -39,11 +39,12 @@ var InfoSchema = new Schema({
 });
 var Info = mongoose.model('Info', InfoSchema);
 
-Info.deleteMany({}, function(err, info) {
-	if (err)
-		res.send(err);
-	console.log('Infos successfully deleted');
-});
+
+// Info.deleteMany({}, function(err, info) {
+// 	if (err)
+// 		res.send(err);
+// 	console.log('Infos successfully deleted');
+// });
 
 
 // Endpoints
@@ -55,8 +56,8 @@ app.get('/home', function(req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
 
-app.get('/data/:data', function (req, res) {
-	Info.find({identificationStr: req.params.data}, function(err, info) {
+app.post('/', function (req, res) {
+	Info.find(req.body, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(info);
@@ -64,15 +65,12 @@ app.get('/data/:data', function (req, res) {
 })
 
 app.post('/data', function(req, res) {
-	res.send(JSON.stringify(req.body));
-
-  // 	var Obj = {name: req.params.data};
-  // 	var insert = new Info(Obj);
-		// insert.save(function(err, info) {
-		// 	if (err)
-		// 		res.send(err);
-		// 		res.json(info);
-		// });
+   	var insert = new Info(req.body);
+	insert.save(function(err, info) {
+	 	if (err)
+	 		res.send(JSON.stringify(err));
+	 		res.json(JSON.stringify(info));
+	});
 })
 
 app.use(function(req, res) {
