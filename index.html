@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Hello</title>
+	<title>FinanceDash</title>
 
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -19,11 +19,18 @@
 		.row {
 			padding: 10px;
 		}
+		.col {
+			border-style: solid;
+			border-width: 1px;
+			border-color: red;
+		}
 	</style>
 </head>
 <body>
-	<h1>World !</h1>
+<!-- ___________________________HEADER___________________________ -->
+	<h1>Manage your spendings !</h1>
 
+<!-- ___________________________PASSPHRASE___________________________ -->
 	<div class="form-group row">
 		<div class="col">
 			<label for="pwd">Passphrase:</label>
@@ -32,7 +39,37 @@
 		</div>
 	</div>
 
+<!-- ___________________________RESULT___________________________ -->
 	<div class="row">
+		<div class="col">
+			<h1>Results :</h1>
+
+			<p>
+				Loisirs : <strong id="desiresValue"></strong>
+				 (<light id="desiresRatio"></light> )
+			</p>
+			<p>
+				Epargne : <strong id="savingsValue"></strong>
+				 (<light id="savingsRatio"></light> )
+			</p>
+			<p>
+				Obligations : <strong id="needsValue"></strong>
+				 (<light id="needsRatio"></light> )
+			</p>
+			<p>
+				TT : <strong id="ttValue"></strong>
+			</p>
+			<p>
+				Provisoire : <strong id="provisionValue"></strong>
+				 (<light id="needsRatio"></light> )
+			</p>
+			<p>
+				Revenue : <strong id="revenueValue"></strong>
+				 (<light id="revenueRatio"></light> )
+			</p>
+		</div>
+
+<!-- ___________________________INPUT___________________________ -->
 		<div class="col">
 			<label for="amountDesc">Description:</label>
 			<input type="text" class="form-control" id="amountDesc">
@@ -42,109 +79,256 @@
 
 			<label for="category">Category:</label>
 			<select class="form-control" id="category" name="sellist1">
-				<option>Desires</option>
-				<option>Savings</option>
-				<option>Needs</option>
+				<option>Loisirs</option>
+				<option>Epargne</option>
+				<option>Obligations</option>
 				<option>Revenue</option>
+				<option>Provisoire</option>
 			</select>
+
+			<label for="date">Date:</label>
+			<input type="date" class="form-control" id="date">
 
 			<button class="btn btn-primary" id="send">Add</button>
 		</div>
+	</div>
 
+<!-- ___________________________ANALYSIS___________________________ -->
+	<div class="row">
+
+<!-- ___________________________A QUOTAS___________________________ -->
 		<div class="col">
-			<h1>Results :</h1>
+			<h2>Daily Quota</h2>
+			<p>
+				Desires : <strong id="desiresQuota"></strong> €
+			</p>
+			<p>
+				Savings : <strong id="savingsQuota"></strong> €
+			</p>
+			<p>
+				Needs : <strong id="needsQuota"></strong> €
+			</p>
+		</div>
 
+<!-- ___________________________A OVERVIEW___________________________ -->
+		<div class="col">
+			<h2>Overview</h2>
 			<p>
-				Desires : <strong id="desiresValue"></strong>
-				 (<light id="desiresRatio"></light>% )</p>
+				Desires : <strong id="desiresSpent"></strong>
+				 (<light id="desiresSpentRatio"></light> )
+			</p>
 			<p>
-				Savings : <strong id="savingsValue"></strong>
-				 (<light id="savingsRatio"></light>% )</p>
+				Savings : <strong id="savingsSpent"></strong>
+				 (<light id="savingsSpentRatio"></light> )
+			</p>
 			<p>
-				Needs : <strong id="needsValue"></strong>
-				 (<light id="needsRatio"></light>% )</p>
+				Needs : <strong id="needsSpent"></strong>
+				 (<light id="needsSpentRatio"></light> )
+			</p>
 			<p>
-				Revenue : <strong id="revenueValue"></strong>
-				 (<light id="revenueRatio"></light>% )</p>
+				Revenue : <strong id="revenueSpent"></strong>
+				 (<light id="revenueSpentRatio"></light> )
+			</p>
+		</div>
+
+<!-- ___________________________A FORECAST___________________________ -->
+		<div class="col">
+			<h2>Forecast</h2>
+			<p>
+				Desires : <strong id="desiresFutureQuota"></strong> €
+				(<light id="desiresRest"></light> €)
+			</p>
+			<p>
+				Savings : <strong id="savingsFutureQuota"></strong> €
+				(<light id="savingsRest"></light> €)
+			</p>
+			<p>
+				Needs : <strong id="needsFutureQuota"></strong> €
+				(<light id="needsRest"></light> €)
+			</p>
+		</div>
+	</div>
+	<div class="row">
+
+<!-- ___________________________ACTION___________________________ -->
+		<div class="col">
+			<button class="btn btn-warning" id="work">Run Analysis</button>
 		</div>
 	</div>
 
+
 </body>
 <script type="text/javascript">
-	// $.get("/", function(data){
-	// 	console.log("Data: " + data);
-	// });
 
 	$("#getInfo").click(function(){
-		var total = [], logs = [];
+		var date = new Date();
+		date.setDate(0);
+		date.setHours(0,0,0);
 
-		logs [0] = [];
-		logs [1] = [];
-		logs [2] = [];
-		logs [3] = [];
-		total [0] = 0;
-		total [1] = 0;
-		total [2] = 0;
-		total [3] = 0;
+		var json = {};
+		json.identificationStr =  $("#pwd").val();
+		json.date = {$lte: date};
 
-		$.post("/", {identificationStr: $("#pwd").val()}, function(data){
-			for (var i = 0; i < data.length; i++) {
+		$.post("/", json, function(data){
 
-				var phrase = data[i].description + " : " + data[i].amount + "(" + data[i].category + " - " + data[i].date + ")";
-
-				switch (data[i].category) {
-					case 'Desires':
-						total[0] += data[i].amount;
-						logs[0].push(phrase)
-					break;
-					case 'Savings':
-						total[1] += data[i].amount;
-						logs[1].push(phrase)
-					break;
-					case 'Needs':
-						total[2] += data[i].amount;
-						logs[2].push(phrase)
-					break;
-					case 'Revenue':
-						total[3] += data[i].amount;
-						logs[3].push(phrase)
-					break;
-				}
-			}
-			console.log(total)
-			console.log(logs)
-
-			$("#desiresValue").text(total[0])
-			$("#savingsValue").text(total[1])
-			$("#needsValue").text(total[2])
-			$("#revenueValue").text(total[3])
-
-			var spent = total[0] + total[1] + total[2];
+			console.log(data)
 			
-			var ratio = [];
-			ratio.push(100 * total[0] / spent)
-			ratio.push(100 * total[1] / spent)
-			ratio.push(100 * total[2] / spent)
-			ratio.push(100 * spent / total[3])
+			var results = Bilan(data)
 
-			$("#desiresRatio").text(ratio[0].toFixed(2))
-			$("#savingsRatio").text(ratio[1].toFixed(2))
-			$("#needsRatio").text(ratio[2].toFixed(2))
-			$("#revenueRatio").text(ratio[3].toFixed(2))
+			fillResults(results)
+
+			if(results.ratio[0] > 30)
+				$("#desiresRatio").css({"color": 'red'});
+			else $("#desiresRatio").css({"color": 'LimeGreen'});
+
+			if(results.ratio[1] < 20)
+				$("#savingsRatio").css({"color": 'red'});
+			else $("#savingsRatio").css({"color": 'LimeGreen'});
+
+			if(results.ratio[2] > 50)
+				$("#needsRatio").css({"color": 'red'});
+			else $("#needsRatio").css({"color": 'LimeGreen'});
+
+			var ref = new Date
+			ref = ref.getDate() / 32;
+
+			if(results.ratio[3] > ref*100)
+				$("#revenueRatio").css({"color": 'red'});
+			else $("#revenueRatio").css({"color": 'LimeGreen'});
 		});
 	});
 
 	$("#send").click(function(){
 		var json = {};
+
 		json.description = $("#amountDesc").val();
 		json.amount = $("#amount").val();
 		json.category = $("#category").val();
 		json.identificationStr = $("#pwd").val();
+		json.date = () => {if($("#date").val()) return $("#date").val(); else return Date.now()}
 
 		$.post("/data", json,
 		function(res){
-			console.log("Response: " + res);
+			// console.log("Response: " + res);
+			$("#amountDesc").val("");
+			$("#amount").val(0);
 		});
 	});
+
+	$("#work").click(function(){
+		var date = new Date();
+		date.setDate(date.getDate() - 1)
+		date.setHours(23,59,59);
+
+		var json = {};
+		json.date = {$lte: date}
+		json.identificationStr = $("#pwd").val();
+
+		$.post("/", json,
+		function(data){
+			var results = Bilan(data);
+			
+			// console.log(results)
+
+			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
+
+			$("#desiresQuota").text(rest * 0.2 / (32 - new Date().getDate()))
+			$("#savingsQuota").text(rest * 0.3 / (32 - new Date().getDate()))
+			$("#needsQuota").text(rest * 0.5 / (32 - new Date().getDate()))
+		});
+
+		var lowerDate = new Date();
+		lowerDate.setHours(0,0,0);
+		var higherDate = new Date();
+		higherDate.setHours(23,59,59);
+
+		json = {};
+		json.date = {$lte: higherDate, $gte: lowerDate}
+		json.identificationStr = $("#pwd").val();
+
+		$.post("/", json,
+		function(data){
+			var results = Bilan(data);
+			
+			// console.log(results)
+
+			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
+
+			$("#desiresSpent").text(results.total[0] + " €")
+			$("#savingsSpent").text(results.total[1] + " €")
+			$("#needsSpent").text(results.total[2] + " €")
+			$("#revenueSpent").text(results.total[3] + " €")
+		});
+	});
+
+	function Bilan (data) {
+		var total = [], logs = [], ratio = [], ref = [];
+
+		logs [0] = [];
+		logs [1] = [];
+		logs [2] = [];
+		logs [3] = [];
+		logs [4] = [];
+		total [0] = 0;
+		total [1] = 0;
+		total [2] = 0;
+		total [3] = 0;
+		total [4] = 0;
+
+		for (var i = 0; i < data.length; i++) {
+
+			var phrase = data[i].description + " : " + data[i].amount + "(" + data[i].category + " - " + data[i].date + ")";
+
+			switch (data[i].category) {
+				case 'Loisirs':
+					total[0] += data[i].amount;
+					logs[0].push(phrase)
+				break;
+				case 'Epargne':
+					total[1] += data[i].amount;
+					logs[1].push(phrase)
+				break;
+				case 'Obligations':
+					total[2] += data[i].amount;
+					logs[2].push(phrase)
+				break;
+				case 'Revenue':
+					total[3] += data[i].amount;
+					logs[3].push(phrase)
+				break;
+				case 'Provisoire':
+					total[4] += data[i].amount;
+					logs[4].push(phrase)
+			}
+		}
+
+		var spent = 0 + total[0] + total[1] + total[2];
+
+		ratio[0] = 100 * total[0] / spent;
+		ratio[1] = 100 * total[1] / spent;
+		ratio[2] = 100 * total[2] / spent;
+
+		return {"total": total, "logs": logs, "ratio": ratio};
+	}
+
+	function fillResults (data) {
+		$("#desiresValue").text(data.total[0] + " €")
+		$("#savingsValue").text(data.total[1] + " €")
+		$("#needsValue").text(data.total[2] + " €")
+		$("#provisionValue").text(data.total[3] + " €")
+		$("#revenueValue").text(data.total[4] + " €")
+
+		var spent = 0 + data.total[0] + data.total[1] + data.total[2];
+		var rest = data.total[3] - spent
+		$("#ttValue").text(spent + " €");
+
+		$("#desiresFutureQuota").text((rest * 0.2 / (32 - new Date().getDate())).toFixed(2))
+		$("#savingsFutureQuota").text((rest * 0.3 / (32 - new Date().getDate())).toFixed(2))
+		$("#needsFutureQuota").text((rest * 0.5 / (32 - new Date().getDate())).toFixed(2))
+
+		$("#desiresRest").text((rest * 0.2).toFixed(2))
+		$("#savingsRest").text((rest * 0.3).toFixed(2))
+		$("#needsRest").text((rest * 0.5).toFixed(2))
+	}
 </script>
 </html>
