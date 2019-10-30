@@ -60,12 +60,15 @@
 				TT : <strong id="ttValue"></strong>
 			</p>
 			<p>
-				Provisoire : <strong id="provisionValue"></strong>
-				 (<light id="needsRatio"></light> )
-			</p>
-			<p>
 				Revenue : <strong id="revenueValue"></strong>
 				 (<light id="revenueRatio"></light> )
+			</p>
+
+			<hr>
+			
+			<p>
+				Provisoire : <strong id="provisionValue"></strong>
+				 (<light id="needsRatio"></light> )
 			</p>
 		</div>
 
@@ -167,34 +170,15 @@
 
 		var json = {};
 		json.identificationStr =  $("#pwd").val();
-		json.date = {$lte: date};
+		json.date = {$gte: date};
 
 		$.post("/", json, function(data){
 
-			console.log(data)
-			
 			var results = Bilan(data)
 
+			console.log(results)
+
 			fillResults(results)
-
-			if(results.ratio[0] > 30)
-				$("#desiresRatio").css({"color": 'red'});
-			else $("#desiresRatio").css({"color": 'LimeGreen'});
-
-			if(results.ratio[1] < 20)
-				$("#savingsRatio").css({"color": 'red'});
-			else $("#savingsRatio").css({"color": 'LimeGreen'});
-
-			if(results.ratio[2] > 50)
-				$("#needsRatio").css({"color": 'red'});
-			else $("#needsRatio").css({"color": 'LimeGreen'});
-
-			var ref = new Date
-			ref = ref.getDate() / 32;
-
-			if(results.ratio[3] > ref*100)
-				$("#revenueRatio").css({"color": 'red'});
-			else $("#revenueRatio").css({"color": 'LimeGreen'});
 		});
 	});
 
@@ -209,7 +193,6 @@
 
 		$.post("/data", json,
 		function(res){
-			// console.log("Response: " + res);
 			$("#amountDesc").val("");
 			$("#amount").val(0);
 		});
@@ -277,7 +260,7 @@
 
 		for (var i = 0; i < data.length; i++) {
 
-			var phrase = data[i].description + " : " + data[i].amount + "(" + data[i].category + " - " + data[i].date + ")";
+			var phrase = data[i].description + " : " + data[i].amount + "(" + data[i].date + ")";
 
 			switch (data[i].category) {
 				case 'Loisirs':
@@ -312,15 +295,16 @@
 	}
 
 	function fillResults (data) {
-		$("#desiresValue").text(data.total[0] + " €")
+		$("#desiresValue").text(data.total[0] + " € / " + data.total[3]*0.3 + " €")
 		$("#savingsValue").text(data.total[1] + " €")
 		$("#needsValue").text(data.total[2] + " €")
-		$("#provisionValue").text(data.total[3] + " €")
-		$("#revenueValue").text(data.total[4] + " €")
+
+		$("#revenueValue").text(data.total[3] + " €")
+		$("#provisionValue").text(data.total[4] + " €")
 
 		var spent = 0 + data.total[0] + data.total[1] + data.total[2];
-		var rest = data.total[3] - spent
 		$("#ttValue").text(spent + " €");
+		var rest = 5;
 
 		$("#desiresFutureQuota").text((rest * 0.2 / (32 - new Date().getDate())).toFixed(2))
 		$("#savingsFutureQuota").text((rest * 0.3 / (32 - new Date().getDate())).toFixed(2))
@@ -329,6 +313,26 @@
 		$("#desiresRest").text((rest * 0.2).toFixed(2))
 		$("#savingsRest").text((rest * 0.3).toFixed(2))
 		$("#needsRest").text((rest * 0.5).toFixed(2))
+
+
+		if(data.ratio[0] > 30)
+			$("#desiresRatio").css({"color": 'red'});
+		else $("#desiresRatio").css({"color": 'LimeGreen'});
+
+		if(data.ratio[1] < 20)
+			$("#savingsRatio").css({"color": 'red'});
+		else $("#savingsRatio").css({"color": 'LimeGreen'});
+
+		if(data.ratio[2] > 50)
+			$("#needsRatio").css({"color": 'red'});
+		else $("#needsRatio").css({"color": 'LimeGreen'});
+
+		var ref = new Date
+		ref = ref.getDate() / 32;
+
+		if(data.ratio[3] > ref*100)
+			$("#revenueRatio").css({"color": 'red'});
+		else $("#revenueRatio").css({"color": 'LimeGreen'});
 	}
 </script>
 </html>
