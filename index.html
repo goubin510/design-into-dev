@@ -22,11 +22,6 @@
 		.col, .col-2, .col-1 {
 			min-width: 120px;
 		}
-		.jumbotron {
-			width: 600px;
-			position: relative;
-			left: 25%;
-		}
 
 		/* OVERLAY */
 
@@ -109,8 +104,9 @@
 	<div id="myNav" class="overlay">
 		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 
-		<div class="overlay-content">
-			<div class="jumbotron">
+		<div class="overlay-content row">
+			<div class="col"></div>
+			<div class="col jumbotron">
 				<label for="amountDesc">Description:</label>
 				<input type="text" class="form-control" id="amountDesc">
 
@@ -131,15 +127,18 @@
 
 				<button class="btn btn-primary" id="send">Send</button>
 			</div>
+			<div class="col"></div>
 		</div>
 	</div>
 <!-- ___________________________PASSPHRASE___________________________ -->
 	<div class="form-group row">
 		<div class="col">
-			<label for="pwd">Passphrase:</label>
-			<input type="password" name="password" class="form-control" id="pwd">
-			<button class="btn btn-success" id="getInfo">retrieve</button>
-			<button class="btn info" onclick="openNav()">add</button>
+			<div>
+				<label for="pwd">Passphrase:</label>
+				<input type="password" name="password" class="form-control" id="pwd">
+				<button class="btn btn-success" id="getInfo">retrieve</button>
+				<button class="btn info" onclick="openNav()">add</button>
+			</div>
 		</div>
 	</div>
 
