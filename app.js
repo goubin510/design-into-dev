@@ -57,6 +57,10 @@ app.get('/home', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
+app.get('/push', function(req, res) {
+
+	res.sendFile(path.join(__dirname + '/push.html'))
+})
 app.get('/test', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/test.html'))
@@ -86,10 +90,3 @@ app.use(function(req, res) {
 app.listen(port, function () {
   	console.log("server running on : http://localhost:" + port)
 })
-
-
-unirest.get('https://iotcf.iot-sap.cfapps.eu10.hana.ondemand.com/appcore-conf/Configuration')
-.headers({'Cookie': 'JSESSIONID=s%3AlJ2K3AjeW3g2E4LXaczw0WsIpk1VTqhO.n9BZGRwKbAYdSKzjY44OlW1%2FKxx979lcl%2F3bYnvpbFM; __VCAP_ID__=dd2c69b8-85b0-446c-51f0-9daa'})
-.end(function (response) {
-  console.log(response.body);
-});

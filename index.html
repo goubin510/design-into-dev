@@ -19,10 +19,85 @@
 		.row {
 			padding: 10px;
 		}
-		.col {
-			border-style: solid;
-			border-width: 1px;
-			border-color: red;
+		.col, .col-2, .col-1 {
+			min-width: 120px;
+		}
+		.jumbotron {
+			width: 600px;
+			position: relative;
+			left: 25%;
+		}
+
+		/* OVERLAY */
+
+		/* The Overlay (background) */
+		.overlay {
+		  /* Height & width depends on how you want to reveal the overlay (see JS below) */   
+		  height: 100%;
+		  width: 0;
+		  position: fixed; /* Stay in place */
+		  z-index: 1; /* Sit on top */
+		  left: 0;
+		  top: 0;
+		  background-color: rgb(0,0,0); /* Black fallback color */
+		  background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+		  overflow-x: hidden; /* Disable horizontal scroll */
+		  transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+		}
+
+		/* Position the content inside the overlay */
+		.overlay-content {
+		  position: relative;
+		  top: 25%; /* 25% from the top */
+		  width: 100%; /* 100% width */
+		  text-align: center; /* Centered text/links */
+		  margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+		}
+
+		/* The navigation links inside the overlay */
+		.overlay a {
+		  padding: 8px;
+		  text-decoration: none;
+		  font-size: 36px;
+		  color: #818181;
+		  display: block; /* Display block instead of inline */
+		  transition: 0.3s; /* Transition effects on hover (color) */
+		}
+
+		/* When you mouse over the navigation links, change their color */
+		.overlay a:hover, .overlay a:focus {
+		  color: #f1f1f1;
+		}
+
+		/* Position the close button (top right corner) */
+		.overlay .closebtn {
+		  position: absolute;
+		  top: 20px;
+		  right: 45px;
+		  font-size: 60px;
+		}
+
+		/* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+		@media screen and (max-height: 450px) {
+		  .overlay a {font-size: 20px}
+		  .overlay .closebtn {
+		    font-size: 40px;
+		    top: 15px;
+		    right: 35px;
+		  }
+		}
+
+		/* BTN */
+
+		/* Blue */
+		.info {
+		  border-color: #2196F3;
+		  color: dodgerblue
+		}
+
+		.info:hover {
+		  background: #2196F3;
+		  color: white;
 		}
 	</style>
 </head>
@@ -30,12 +105,41 @@
 <!-- ___________________________HEADER___________________________ -->
 	<h1>Manage your spendings !</h1>
 
+<!-- ___________________________OVERLAY___________________________ -->
+	<div id="myNav" class="overlay">
+		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+		<div class="overlay-content">
+			<div class="jumbotron">
+				<label for="amountDesc">Description:</label>
+				<input type="text" class="form-control" id="amountDesc">
+
+				<label for="amount">Amount:</label>
+				<input type="text" class="form-control" id="amount">
+
+				<label for="category">Category:</label>
+				<select class="form-control" id="category" name="sellist1">
+					<option>Loisirs</option>
+					<option>Epargne</option>
+					<option>Obligations</option>
+					<option>Revenue</option>
+					<option>Provisoire</option>
+				</select>
+
+				<label for="date">Date:</label>
+				<input type="date" class="form-control" id="date">
+
+				<button class="btn btn-primary" id="send">Send</button>
+			</div>
+		</div>
+	</div>
 <!-- ___________________________PASSPHRASE___________________________ -->
 	<div class="form-group row">
 		<div class="col">
 			<label for="pwd">Passphrase:</label>
 			<input type="password" name="password" class="form-control" id="pwd">
 			<button class="btn btn-success" id="getInfo">retrieve</button>
+			<button class="btn info" onclick="openNav()">add</button>
 		</div>
 	</div>
 
@@ -43,56 +147,85 @@
 	<div class="row">
 		<div class="col">
 			<h1>Results :</h1>
+		</div>	
+	</div>
 
+	<div class="row">
+		<div class="col-2">
 			<p>
-				Loisirs : <strong id="desiresValue"></strong>
-				 (<light id="desiresRatio"></light> )
+				Loisirs :
 			</p>
 			<p>
-				Epargne : <strong id="savingsValue"></strong>
-				 (<light id="savingsRatio"></light> )
+				Epargne :
 			</p>
 			<p>
-				Obligations : <strong id="needsValue"></strong>
-				 (<light id="needsRatio"></light> )
-			</p>
-			<p>
-				TT : <strong id="ttValue"></strong>
-			</p>
-			<p>
-				Revenue : <strong id="revenueValue"></strong>
-				 (<light id="revenueRatio"></light> )
+				Obligations :
 			</p>
 
 			<hr>
-			
+
 			<p>
-				Provisoire : <strong id="provisionValue"></strong>
-				 (<light id="needsRatio"></light> )
+				TT :
+			</p>
+			<p>
+				Revenue :
+
+			<hr>
+
+			<p>
+				Provisoire :
 			</p>
 		</div>
+		<div class="col-1">
+			<p>
+				<strong id="desiresValue">-</strong>
+			</p>
+			<p>
+				<strong id="savingsValue">-</strong>
+			</p>
+			<p>
+				<strong id="needsValue">-</strong>
+			</p>
 
-<!-- ___________________________INPUT___________________________ -->
-		<div class="col">
-			<label for="amountDesc">Description:</label>
-			<input type="text" class="form-control" id="amountDesc">
+			<hr>
 
-			<label for="amount">Amount:</label>
-			<input type="text" class="form-control" id="amount">
+			<p>
+				<strong id="ttValue">-</strong>
+			</p>
+			<p>
+				<strong id="revenueValue">-</strong>
 
-			<label for="category">Category:</label>
-			<select class="form-control" id="category" name="sellist1">
-				<option>Loisirs</option>
-				<option>Epargne</option>
-				<option>Obligations</option>
-				<option>Revenue</option>
-				<option>Provisoire</option>
-			</select>
+			<hr>
 
-			<label for="date">Date:</label>
-			<input type="date" class="form-control" id="date">
+			<p>
+				<strong id="provisionValue">-</strong>
+			</p>
+		</div>
+		<div class="col-1">
+			<p>
+				(<light id="desiresRatio">-</light>)
+			</p>
+			<p>
+				(<light id="savingsRatio">-</light>)
+			</p>
+			<p>
+				(<light id="needsRatio">-</light>)
+			</p>
 
-			<button class="btn btn-primary" id="send">Add</button>
+			<hr>
+
+			<p>
+				(<light id="ttRatio">-</light>)
+			</p>
+			<p>
+				(<light id="revenueRatio">-</light>)
+			</p>
+
+			<hr>
+
+			<p>
+				(<light id="provisionRatio">-</light>)
+			</p>
 		</div>
 	</div>
 
@@ -118,19 +251,19 @@
 			<h2>Overview</h2>
 			<p>
 				Desires : <strong id="desiresSpent"></strong>
-				 (<light id="desiresSpentRatio"></light> )
+				(<light id="desiresSpentRatio"></light>)
 			</p>
 			<p>
 				Savings : <strong id="savingsSpent"></strong>
-				 (<light id="savingsSpentRatio"></light> )
+				(<light id="savingsSpentRatio"></light>)
 			</p>
 			<p>
 				Needs : <strong id="needsSpent"></strong>
-				 (<light id="needsSpentRatio"></light> )
+				(<light id="needsSpentRatio"></light>)
 			</p>
 			<p>
 				Revenue : <strong id="revenueSpent"></strong>
-				 (<light id="revenueSpentRatio"></light> )
+				(<light id="revenueSpentRatio"></light>)
 			</p>
 		</div>
 
@@ -286,34 +419,33 @@
 		}
 
 		var spent = 0 + total[0] + total[1] + total[2];
+		var ratioDate = new Date();
 
 		ratio[0] = 100 * total[0] / spent;
 		ratio[1] = 100 * total[1] / spent;
 		ratio[2] = 100 * total[2] / spent;
+		ratio[3] = 100 * ratioDate.getDate() / 32;		
+		ratio[4] = 100 * total[4] / total[3];
 
 		return {"total": total, "logs": logs, "ratio": ratio};
 	}
 
 	function fillResults (data) {
-		$("#desiresValue").text(data.total[0] + " € / " + data.total[3]*0.3 + " €")
-		$("#savingsValue").text(data.total[1] + " €")
-		$("#needsValue").text(data.total[2] + " €")
-
-		$("#revenueValue").text(data.total[3] + " €")
-		$("#provisionValue").text(data.total[4] + " €")
+		$("#desiresValue").text(" " + data.total[0] + " € ")
+		$("#savingsValue").text(" " + data.total[1] + " € ")
+		$("#needsValue").text(" " + data.total[2] + " € ")
+		$("#revenueValue").text(" " + data.total[3] + " € ")
+		$("#provisionValue").text(" " + data.total[4] + " € ")
+		$("#desiresRatio").text(" " + data.ratio[0].toFixed(2) + " % ")
+		$("#savingsRatio").text(" " + data.ratio[1].toFixed(2) + " % ")
+		$("#needsRatio").text(" " + data.ratio[2].toFixed(2) + " % ")
+		$("#revenueRatio").text(" " + data.ratio[3].toFixed(2) + " % ")		
+		$("#provisionRatio").text(" " + data.ratio[4].toFixed(2) + " % " )
 
 		var spent = 0 + data.total[0] + data.total[1] + data.total[2];
-		$("#ttValue").text(spent + " €");
-		var rest = 5;
-
-		$("#desiresFutureQuota").text((rest * 0.2 / (32 - new Date().getDate())).toFixed(2))
-		$("#savingsFutureQuota").text((rest * 0.3 / (32 - new Date().getDate())).toFixed(2))
-		$("#needsFutureQuota").text((rest * 0.5 / (32 - new Date().getDate())).toFixed(2))
-
-		$("#desiresRest").text((rest * 0.2).toFixed(2))
-		$("#savingsRest").text((rest * 0.3).toFixed(2))
-		$("#needsRest").text((rest * 0.5).toFixed(2))
-
+		$("#ttValue").text(" " + spent + " €");
+		$("#ttRatio").text(" " + (100*spent/data.total[3]).toFixed(2) + " % ");
+		var rest = data.total[3] - spent;
 
 		if(data.ratio[0] > 30)
 			$("#desiresRatio").css({"color": 'red'});
@@ -326,13 +458,14 @@
 		if(data.ratio[2] > 50)
 			$("#needsRatio").css({"color": 'red'});
 		else $("#needsRatio").css({"color": 'LimeGreen'});
+	}
 
-		var ref = new Date
-		ref = ref.getDate() / 32;
+	function openNav() {
+	  document.getElementById("myNav").style.width = "100%";
+	}
 
-		if(data.ratio[3] > ref*100)
-			$("#revenueRatio").css({"color": 'red'});
-		else $("#revenueRatio").css({"color": 'LimeGreen'});
+	function closeNav() {
+	  document.getElementById("myNav").style.width = "0%";
 	}
 </script>
 </html>
