@@ -22,6 +22,9 @@
 		.col, .col-2, .col-1 {
 			min-width: 120px;
 		}
+		.form-control {
+			margin-bottom: 10px;
+		}
 
 		/* OVERLAY */
 
@@ -133,12 +136,14 @@
 <!-- ___________________________PASSPHRASE___________________________ -->
 	<div class="form-group row">
 		<div class="col">
-			<div>
+			<form>
 				<label for="pwd">Passphrase:</label>
 				<input type="password" name="password" class="form-control" id="pwd">
-				<button class="btn btn-success" id="getInfo">retrieve</button>
-				<button class="btn info" onclick="openNav()">add</button>
-			</div>
+				<input type="submit" class="btn btn-info" id="getInfo">
+			</form>
+				<br>
+				<button class="btn btn-success" id="getInfo">Retrieve Data</button>
+				<button class="btn info" onclick="openNav()">Add Data</button>
 		</div>
 	</div>
 
