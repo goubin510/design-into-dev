@@ -20,7 +20,7 @@
 			padding: 10px;
 		}
 		.col, .col-2, .col-1 {
-			min-width: 130px;
+			min-width: 120px;
 		}
 		.form-control {
 			margin-bottom: 10px;
@@ -105,7 +105,7 @@
 
 <!-- ___________________________OVERLAY___________________________ -->
 	<div id="myNav" class="overlay">
-		<a href="javascript:void(0)" class="closebtn" onclick="closeMod()">&times;</a>
+		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 
 		<div class="overlay-content row">
 			<div class="col"></div>
@@ -143,7 +143,7 @@
 			</form>
 				<br>
 				<button class="btn btn-success" id="getInfo">Retrieve Data</button>
-				<button class="btn info" onclick="openMod()">Add Data</button>
+				<button class="btn info" onclick="openNav()">Add Data</button>
 		</div>
 	</div>
 
@@ -299,46 +299,27 @@
 
 </body>
 <script type="text/javascript">
+
 	$("#getInfo").click(function(){
-		load();
+		var date = new Date();
+		date.setDate(0);
+		date.setHours(0,0,0);
+
+		var json = {};
+		json.identificationStr =  $("#pwd").val();
+		json.date = {$gte: date};
+
+		$.post("/", json, function(data){
+
+			var results = Bilan(data)
+
+			console.log(results)
+
+			fillResults(results)
+		});
 	});
 
 	$("#send").click(function(){
-		postData();
-	});
-
-	$("#work").click(function(){
-		analyse();
-	});
-
-	function openMod() {
-	  document.getElementById("myNav").style.width = "100%";
-	}
-
-	function closeMod() {
-	  document.getElementById("myNav").style.width = "0%";
-	}
-
-	function load(){
-			var date = new Date();
-			date.setDate(0);
-			date.setHours(0,0,0);
-
-			var json = {};
-			json.identificationStr =  $("#pwd").val();
-			json.date = {$gte: date};
-
-			$.post("/", json, function(data){
-
-				var results = Bilan(data)
-
-				console.log(results)
-
-				fillResults(results)
-			});
-	}
-
-	function postData(){
 		var json = {};
 
 		json.description = $("#amountDesc").val();
@@ -351,13 +332,57 @@
 		function(res){
 			$("#amountDesc").val("");
 			$("#amount").val(0);
-			closeMod();
-			load();
 		});
-	}
+	});
+
+	$("#work").click(function(){
+		var date = new Date();
+		date.setDate(date.getDate() - 1)
+		date.setHours(23,59,59);
+
+		var json = {};
+		json.date = {$lte: date}
+		json.identificationStr = $("#pwd").val();
+
+		$.post("/", json,
+		function(data){
+			var results = Bilan(data);
+			
+			// console.log(results)
+
+			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
+
+			$("#desiresQuota").text(rest * 0.2 / (32 - new Date().getDate()))
+			$("#savingsQuota").text(rest * 0.3 / (32 - new Date().getDate()))
+			$("#needsQuota").text(rest * 0.5 / (32 - new Date().getDate()))
+		});
+
+		var lowerDate = new Date();
+		lowerDate.setHours(0,0,0);
+		var higherDate = new Date();
+		higherDate.setHours(23,59,59);
+
+		json = {};
+		json.date = {$lte: higherDate, $gte: lowerDate}
+		json.identificationStr = $("#pwd").val();
+
+		$.post("/", json,
+		function(data){
+			var results = Bilan(data);
+			
+			// console.log(results)
+
+			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
+
+			$("#desiresSpent").text(results.total[0] + " €")
+			$("#savingsSpent").text(results.total[1] + " €")
+			$("#needsSpent").text(results.total[2] + " €")
+			$("#revenueSpent").text(results.total[3] + " €")
+		});
+	});
 
 	function Bilan (data) {
-		var total = [], logs = [], ratio = [], rest = [];
+		var total = [], logs = [], ratio = [], ref = [];
 
 		logs [0] = [];
 		logs [1] = [];
@@ -403,16 +428,11 @@
 		ratio[0] = (100 * total[0]) / (total[3] * 0.3);
 		ratio[1] = (100 * total[1]) / (total[3] * 0.2);
 		ratio[2] = (100 * total[2]) / (total[3] * 0.5);
-		ratio[3] = 100 * spent / total[3];
+		ratio[3] = spent / total[3];
 		ratio[4] = 100 * total[4] / total[3];
 		ratio[5] = 100 * ratioDate.getDate() / 32;
 
-		rest[0] = total[3] * 0.3 - total[0];
-		rest[1] = total[3] * 0.2 - total[1];
-		rest[2] = total[3] * 0.5 - total[2];
-		rest[3] = total[3] - spent;
-
-		return {"total": total, "logs": logs, "ratio": ratio, "rest": rest};
+		return {"total": total, "logs": logs, "ratio": ratio};
 	}
 
 	function fillResults (data) {
@@ -422,74 +442,36 @@
 		$("#revenueValue").text(" " + data.total[3] + " € ");
 		$("#provisionValue").text(" " + data.total[4] + " € ");
 
-		$("#desiresRatio").text(" " + data.ratio[0].toFixed(0) + " % - " + data.rest[0] + " € ");
-		$("#savingsRatio").text(" " + data.ratio[1].toFixed(0) + " % - " + data.rest[1] + " € ");
-		$("#needsRatio").text(" " + data.ratio[2].toFixed(0) + " % - " + data.rest[2] + " € ");
-		$("#revenueRatio").text(" " + data.ratio[3].toFixed(0) + " % - " + data.rest[3] + " € ");
-		$("#provisionRatio").text(" " + data.ratio[4].toFixed(0) + " % ");
+		$("#desiresRatio").text(" " + data.ratio[0].toFixed(2) + " % - " + 0 + " € ");
+		$("#savingsRatio").text(" " + data.ratio[1].toFixed(2) + " % - " + 0 + " € ");
+		$("#needsRatio").text(" " + data.ratio[2].toFixed(2) + " % - " + 0 + " € ");
+		$("#revenueRatio").text(" " + data.ratio[3].toFixed(2) + " % - " + 0 + " € ");
+		$("#provisionRatio").text(" " + data.ratio[4].toFixed(2) + " % - " + 0 + " € ");
 
 		var spent = 0 + data.total[0] + data.total[1] + data.total[2];
 		$("#ttValue").text(" " + spent + " €");
-		$("#ttRatio").text(" " + (100*spent/data.total[3]).toFixed(0) + "% / " + data.ratio[5].toFixed(0) + "% ");
+		$("#ttRatio").text(" " + (100*spent/data.total[3]).toFixed(2) + " % ");
 		var rest = data.total[3] - spent;
 
-		if(data.ratio[0] > 100)
+		if(data.ratio[0] > 30)
 			$("#desiresRatio").css({"color": 'red'});
-		else $("#desiresRatio").css({"color": 'orange'});
+		else $("#desiresRatio").css({"color": 'LimeGreen'});
 
-		if(data.ratio[1] < 100)
-			$("#savingsRatio").css({"color": 'orange'});
+		if(data.ratio[1] < 20)
+			$("#savingsRatio").css({"color": 'red'});
 		else $("#savingsRatio").css({"color": 'LimeGreen'});
 
-		if(data.ratio[2] > 100)
+		if(data.ratio[2] > 50)
 			$("#needsRatio").css({"color": 'red'});
-		else $("#needsRatio").css({"color": 'orange'});
+		else $("#needsRatio").css({"color": 'LimeGreen'});
 	}
 
-	function analyse () {
-		var date = new Date();
-		date.setDate(date.getDate() - 1)
-		date.setHours(23,59,59);
+	function openNav() {
+	  document.getElementById("myNav").style.width = "100%";
+	}
 
-		var json = {};
-		json.date = {$lte: date}
-		json.identificationStr = $("#pwd").val();
-
-		$.post("/", json,
-		function(data){
-			var results = Bilan(data);
-			
-			// console.log(results)
-
-			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
-
-			$("#desiresQuota").text(rest * 0.2 / (32 - new Date().getDate()))
-			$("#savingsQuota").text(rest * 0.3 / (32 - new Date().getDate()))
-			$("#needsQuota").text(rest * 0.5 / (32 - new Date().getDate()))
-		});
-
-		var lowerDate = new Date();
-		lowerDate.setHours(0,0,0);
-		var higherDate = new Date();
-		higherDate.setHours(23,59,59);
-
-		json = {};
-		json.date = {$lte: higherDate, $gte: lowerDate}
-		json.identificationStr = $("#pwd").val();
-
-		$.post("/", json,
-		function(data){
-			var results = Bilan(data);
-			
-			// console.log(results)
-
-			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
-
-			$("#desiresSpent").text(results.total[0] + " €")
-			$("#savingsSpent").text(results.total[1] + " €")
-			$("#needsSpent").text(results.total[2] + " €")
-			$("#revenueSpent").text(results.total[3] + " €")
-		});
+	function closeNav() {
+	  document.getElementById("myNav").style.width = "0%";
 	}
 </script>
 </html>
