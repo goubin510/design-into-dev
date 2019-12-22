@@ -15,7 +15,13 @@
 	<!-- Latest compiled JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
+	<!-- Angular JS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
 	<style type="text/css">
+		#raw {
+			margin: 20px;
+		}
 		.row {
 			padding: 10px;
 		}
@@ -99,7 +105,7 @@
 		}
 	</style>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
 <!-- ___________________________HEADER___________________________ -->
 	<h1>Manage your spendings !</h1>
 
@@ -122,7 +128,6 @@
 					<option>Epargne</option>
 					<option>Obligations</option>
 					<option>Revenue</option>
-					<option>Provisoire</option>
 				</select>
 
 				<label for="date">Date:</label>
@@ -146,96 +151,34 @@
 
 <!-- ___________________________RESULT___________________________ -->
 	<div class="row analysis">
+		<div class="col"></div>
 		<div class="col">
-			<button class="btn btn-success" id="getInfo">Retrieve Data</button>
 			<button class="btn info" onclick="openMod()">Add Data</button>
 			<h1>Results :</h1>
 		</div>	
+		<div class="col"></div>
 	</div>
 
-	<p id="raw"></p>
-
 	<div class="row analysis">
-		<div class="col-2">
-			<p>
-				Loisirs :
-			</p>
-			<p>
-				Epargne :
-			</p>
-			<p>
-				Obligations :
-			</p>
-
-			<hr>
-
-			<p>
-				TT :
-			</p>
-			<p>
-				Revenue :
-
-			<hr>
-
-			<p>
-				Provisoire :
-			</p>
+		<div class="col-1">
+			{{plop}}
+		</div>
+		<div class="col">
+			{{plop}}
+		</div>
+		<div class="col">
+			{{plop}}
+		</div>
+		<div class="col">
+			{{plop}}
 		</div>
 		<div class="col-1">
-			<p>
-				<strong id="desiresValue">-</strong>
-			</p>
-			<p>
-				<strong id="savingsValue">-</strong>
-			</p>
-			<p>
-				<strong id="needsValue">-</strong>
-			</p>
-
-			<hr>
-
-			<p>
-				<strong id="ttValue">-</strong>
-			</p>
-			<p>
-				<strong id="revenueValue">-</strong>
-
-			<hr>
-
-			<p>
-				<strong id="provisionValue">-</strong>
-			</p>
-		</div>
-		<div class="col-1">
-			<p>
-				(<light id="desiresRatio">-</light>)
-			</p>
-			<p>
-				(<light id="savingsRatio">-</light>)
-			</p>
-			<p>
-				(<light id="needsRatio">-</light>)
-			</p>
-
-			<hr>
-
-			<p>
-				(<light id="ttRatio">-</light>)
-			</p>
-			<p>
-				(<light id="revenueRatio">-</light>)
-			</p>
-
-			<hr>
-
-			<p>
-				(<light id="provisionRatio">-</light>)
-			</p>
+			{{plop}}
 		</div>
 	</div>
 
 <!-- ___________________________ANALYSIS___________________________ -->
-	<div class="row analysis">
+	<div class="row analysisBis">
 
 <!-- ___________________________A QUOTAS___________________________ -->
 		<div class="col">
@@ -291,7 +234,7 @@
 	</div>
 
 <!-- ___________________________ACTION___________________________ -->
-	<div class="row analysis">
+	<div class="row analysisBis">
 		<div class="col">
 			<button class="btn btn-warning" id="work">Run Analysis</button>
 		</div>
@@ -312,10 +255,7 @@
 		$(".analysis").hide()
 	}
 
-
-	$("#getInfo").click(function(){
-		load();
-	});
+	$(".analysisBis").hide();
 
 	$("#send").click(function(){
 		postData();
@@ -334,25 +274,21 @@
 	}
 
 	function load(){
-		console.log("id", urlParams.get("id"))
-
 			var date = new Date();
 			date.setDate(0);
 			date.setHours(0,0,0);
 
 			var json = {};
 			json.identificationStr = urlParams.get("id");
-			json.date = {$gte: date};
 
 			$.post("/", json, function(data){
 
-				console.log("res", data)
+				console.log(data)
+	var app = angular.module('myApp', []);
+	app.controller('myCtrl', function($scope) {
+			$scope.plop = "plop";
+	});
 
-				var results = Bilan(data)
-
-				console.log(results)
-
-				fillResults(results)
 			});
 	}
 
@@ -372,142 +308,6 @@
 			$("#amount").val(0);
 			closeMod();
 			load();
-		});
-	}
-
-	function Bilan (data) {
-		var total = [], logs = [], ratio = [], rest = [];
-
-		logs [0] = [];
-		logs [1] = [];
-		logs [2] = [];
-		logs [3] = [];
-		logs [4] = [];
-		total [0] = 0;
-		total [1] = 0;
-		total [2] = 0;
-		total [3] = 0;
-		total [4] = 0;
-
-		for (var i = 0; i < data.length; i++) {
-
-			var phrase = data[i].description + " : " + data[i].amount + "(" + data[i].date + ")";
-
-			switch (data[i].category) {
-				case 'Loisirs':
-					total[0] += data[i].amount;
-					logs[0].push(phrase)
-				break;
-				case 'Epargne':
-					total[1] += data[i].amount;
-					logs[1].push(phrase)
-				break;
-				case 'Obligations':
-					total[2] += data[i].amount;
-					logs[2].push(phrase)
-				break;
-				case 'Revenue':
-					total[3] += data[i].amount;
-					logs[3].push(phrase)
-				break;
-				case 'Provisoire':
-					total[4] += data[i].amount;
-					logs[4].push(phrase)
-			}
-		}
-
-		var spent = 0 + total[0] + total[1] + total[2];
-		var ratioDate = new Date();
-
-		ratio[0] = (100 * total[0]) / (total[3] * 0.3);
-		ratio[1] = (100 * total[1]) / (total[3] * 0.2);
-		ratio[2] = (100 * total[2]) / (total[3] * 0.5);
-		ratio[3] = 100 * spent / total[3];
-		ratio[4] = 100 * total[4] / total[3];
-		ratio[5] = 100 * ratioDate.getDate() / 32;
-
-		rest[0] = total[3] * 0.3 - total[0];
-		rest[1] = total[3] * 0.2 - total[1];
-		rest[2] = total[3] * 0.5 - total[2];
-		rest[3] = total[3] - spent;
-
-		return {"total": total, "logs": logs, "ratio": ratio, "rest": rest};
-	}
-
-	function fillResults (data) {
-		$("#desiresValue").text(" " + data.total[0] + " € ");
-		$("#savingsValue").text(" " + data.total[1] + " € ");
-		$("#needsValue").text(" " + data.total[2] + " € ");
-		$("#revenueValue").text(" " + data.total[3] + " € ");
-		$("#provisionValue").text(" " + data.total[4] + " € ");
-
-		$("#desiresRatio").text(" " + data.ratio[0].toFixed(0) + " % - " + data.rest[0] + " € ");
-		$("#savingsRatio").text(" " + data.ratio[1].toFixed(0) + " % - " + data.rest[1] + " € ");
-		$("#needsRatio").text(" " + data.ratio[2].toFixed(0) + " % - " + data.rest[2] + " € ");
-		$("#revenueRatio").text(" " + data.ratio[3].toFixed(0) + " % - " + data.rest[3] + " € ");
-		$("#provisionRatio").text(" " + data.ratio[4].toFixed(0) + " % ");
-
-		var spent = 0 + data.total[0] + data.total[1] + data.total[2];
-		$("#ttValue").text(" " + spent + " €");
-		$("#ttRatio").text(" " + (100*spent/data.total[3]).toFixed(0) + "% / " + data.ratio[5].toFixed(0) + "% ");
-		var rest = data.total[3] - spent;
-
-		if(data.ratio[0] > 100)
-			$("#desiresRatio").css({"color": 'red'});
-		else $("#desiresRatio").css({"color": 'orange'});
-
-		if(data.ratio[1] < 100)
-			$("#savingsRatio").css({"color": 'orange'});
-		else $("#savingsRatio").css({"color": 'LimeGreen'});
-
-		if(data.ratio[2] > 100)
-			$("#needsRatio").css({"color": 'red'});
-		else $("#needsRatio").css({"color": 'orange'});
-	}
-
-	function analyse () {
-		var date = new Date();
-		date.setDate(date.getDate() - 1)
-		date.setHours(23,59,59);
-
-		var json = {};
-		json.date = {$lte: date}
-		json.identificationStr = urlParams.get("id");
-
-		$.post("/", json,
-		function(data){
-			var results = Bilan(data);
-			
-			// console.log(results)
-
-			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
-
-			$("#desiresQuota").text(rest * 0.2 / (32 - new Date().getDate()))
-			$("#savingsQuota").text(rest * 0.3 / (32 - new Date().getDate()))
-			$("#needsQuota").text(rest * 0.5 / (32 - new Date().getDate()))
-		});
-
-		var lowerDate = new Date();
-		lowerDate.setHours(0,0,0);
-		var higherDate = new Date();
-		higherDate.setHours(23,59,59);
-
-		json = {};
-		json.date = {$lte: higherDate, $gte: lowerDate}
-		json.identificationStr = urlParams.get("id");
-
-		$.post("/", json,
-		function(data){
-			var results = Bilan(data);
-			
-			// console.log(results)
-
-			var rest = results.total[3] - results.total[0] - results.total[1] - results.total[2];
-
-			$("#desiresSpent").text(results.total[0] + " €")
-			$("#savingsSpent").text(results.total[1] + " €")
-			$("#needsSpent").text(results.total[2] + " €")
-			$("#revenueSpent").text(results.total[3] + " €")
 		});
 	}
 </script>

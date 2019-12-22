@@ -56,12 +56,17 @@ app.get('/home', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
+app.get('/home/:id', function(req, res) {
+	console.log(req.params.id)
+	
+	res.sendFile(path.join(__dirname + '/index.html'))
+})
 
 app.post('/', function (req, res) {
 	Info.find(req.body, function(err, info) {
 		if (err)
 			res.send(err);
-			res.json(info);
+			res.json(analysis.basics(info));
 	});
 })
 
