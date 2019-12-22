@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 // Mongoose connection set up
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92', { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect('mongodb://Writer:Writer123@ds239928.mlab.com:39928/heroku_kflqvm92', { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 
 var InfoSchema = new Schema({
   description: {
@@ -51,23 +51,23 @@ var Info = mongoose.model('Info', InfoSchema);
 
 // Endpoints
 app.get('/', function(req, res) {
-	res.send('Working !')
+	res.send('C Live !')
 })
 app.get('/home', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
-app.get('/push', function(req, res) {
-
-	res.sendFile(path.join(__dirname + '/push.html'))
-})
-app.get('/test', function(req, res) {
-
-	res.sendFile(path.join(__dirname + '/test.html'))
-})
 
 app.post('/', function (req, res) {
 	Info.find(req.body, function(err, info) {
+		if (err)
+			res.send(err);
+			res.json(info);
+	});
+})
+
+app.get('/raw', function (req, res) {
+	Info.find({}, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(info);
@@ -83,10 +83,13 @@ app.post('/data', function(req, res) {
 	});
 })
 
+// Redirection & launch app
+
 app.use(function(req, res) {
 	res.status(404).send({url: req.originalUrl + ' not found'})
 });
 
 app.listen(port, function () {
+	console.log(new Date)
   	console.log("server running on : http://localhost:" + port)
 })

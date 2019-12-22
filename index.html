@@ -134,27 +134,26 @@
 		</div>
 	</div>
 <!-- ___________________________PASSPHRASE___________________________ -->
-	<div class="form-group row">
+	<div class="form-group row entry">
 		<div class="col">
 			<form>
 				<label for="pwd">Passphrase:</label>
-				<input type="password" name="password" class="form-control" id="pwd">
+				<input type="text" name="id" class="form-control" id="passPhrase">
 				<input type="submit" class="btn btn-info">
 			</form>
-				<br>
-				<button class="btn btn-success" id="getInfo">Retrieve Data</button>
-				<button class="btn info" onclick="openMod()">Add Data</button>
 		</div>
 	</div>
 
 <!-- ___________________________RESULT___________________________ -->
-	<div class="row">
+	<div class="row analysis">
 		<div class="col">
+			<button class="btn btn-success" id="getInfo">Retrieve Data</button>
+			<button class="btn info" onclick="openMod()">Add Data</button>
 			<h1>Results :</h1>
 		</div>	
 	</div>
 
-	<div class="row">
+	<div class="row analysis">
 		<div class="col-2">
 			<p>
 				Loisirs :
@@ -234,7 +233,7 @@
 	</div>
 
 <!-- ___________________________ANALYSIS___________________________ -->
-	<div class="row">
+	<div class="row analysis">
 
 <!-- ___________________________A QUOTAS___________________________ -->
 		<div class="col">
@@ -288,9 +287,9 @@
 			</p>
 		</div>
 	</div>
-	<div class="row">
 
 <!-- ___________________________ACTION___________________________ -->
+	<div class="row analysis">
 		<div class="col">
 			<button class="btn btn-warning" id="work">Run Analysis</button>
 		</div>
@@ -299,6 +298,19 @@
 
 </body>
 <script type="text/javascript">
+	var urlParams = new URLSearchParams(window.location.search);
+
+	if(urlParams.get("id")){
+		$(".entry").hide()
+		$(".analysis").show()
+
+		load();
+	} else {
+		$(".entry").show()
+		$(".analysis").hide()
+	}
+
+
 	$("#getInfo").click(function(){
 		load();
 	});
@@ -320,15 +332,19 @@
 	}
 
 	function load(){
+		console.log("id", urlParams.get("id"))
+
 			var date = new Date();
 			date.setDate(0);
 			date.setHours(0,0,0);
 
 			var json = {};
-			json.identificationStr =  $("#pwd").val();
+			json.identificationStr = urlParams.get("id");
 			json.date = {$gte: date};
 
 			$.post("/", json, function(data){
+
+				console.log("res", data)
 
 				var results = Bilan(data)
 
@@ -344,7 +360,8 @@
 		json.description = $("#amountDesc").val();
 		json.amount = $("#amount").val();
 		json.category = $("#category").val();
-		json.identificationStr = $("#pwd").val();
+		json.identificationStr = urlParams.get("id");
+
 		json.date = () => {if($("#date").val()) return $("#date").val(); else return Date.now()}
 
 		$.post("/data", json,
@@ -453,7 +470,7 @@
 
 		var json = {};
 		json.date = {$lte: date}
-		json.identificationStr = $("#pwd").val();
+		json.identificationStr = urlParams.get("id");
 
 		$.post("/", json,
 		function(data){
@@ -475,7 +492,7 @@
 
 		json = {};
 		json.date = {$lte: higherDate, $gte: lowerDate}
-		json.identificationStr = $("#pwd").val();
+		json.identificationStr = urlParams.get("id");
 
 		$.post("/", json,
 		function(data){
