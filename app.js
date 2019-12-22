@@ -4,6 +4,7 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	path = require('path'),
 	unirest = require('unirest'),
+	analysis = require('./scripts/analysis'),
 
 	app = express(),
 	port = process.env.PORT || 3000,
@@ -40,14 +41,12 @@ var InfoSchema = new Schema({
 });
 var Info = mongoose.model('Info', InfoSchema);
 
-
 // Info.deleteMany({}, function(err, info) {
 // 	if (err)
 // 		res.send(err);
 // 	console.log()
 // 	console.log('Infos successfully deleted');
 // });
-
 
 // Endpoints
 app.get('/', function(req, res) {
