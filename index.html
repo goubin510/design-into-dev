@@ -164,13 +164,13 @@
 			{{plop}}
 		</div>
 		<div class="col">
-			{{plop}}
+			{{blop}}
 		</div>
 		<div class="col">
-			{{plop}}
+			{{blop}}
 		</div>
 		<div class="col">
-			{{plop}}
+			{{blop}}
 		</div>
 		<div class="col-1">
 			{{plop}}
@@ -244,6 +244,25 @@
 </body>
 <script type="text/javascript">
 	var urlParams = new URLSearchParams(window.location.search);
+	var app = angular.module('myApp', []);
+
+	app.controller('myCtrl', function($scope, $http) {
+			$scope.plop = "init..."
+			$scope.blop = "init..."
+
+			var json = {};
+			json.identificationStr = urlParams.get("id");
+
+			$http({
+					method : "POST",
+					url : "/",
+					data: json
+				})
+				.then(function(response) {
+					$scope.plop = response.data;
+			});
+			
+	});
 
 	if(urlParams.get("id")){
 		$(".entry").hide()
@@ -254,8 +273,6 @@
 		$(".entry").show()
 		$(".analysis").hide()
 	}
-
-	$(".analysisBis").hide();
 
 	$("#send").click(function(){
 		postData();
@@ -274,21 +291,12 @@
 	}
 
 	function load(){
-			var date = new Date();
-			date.setDate(0);
-			date.setHours(0,0,0);
-
 			var json = {};
 			json.identificationStr = urlParams.get("id");
 
 			$.post("/", json, function(data){
 
 				console.log(data)
-	var app = angular.module('myApp', []);
-	app.controller('myCtrl', function($scope) {
-			$scope.plop = "plop";
-	});
-
 			});
 	}
 

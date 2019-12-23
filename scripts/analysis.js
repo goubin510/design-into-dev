@@ -55,28 +55,28 @@ module.exports = {
 	var dayLeft = 32 - date.getDate()
 
 	temp.Loisirs = [];
-	temp.Loisirs.push(isValuable(res.previous.Revenue) * 0.3)
-	temp.Loisirs.push(isValuable(res.ongoing.Revenue) * 0.3)
-	temp.Loisirs.push((temp.Loisirs[0] - isValuable(res.previous.Loisirs)) / dayLeft)
-	temp.Loisirs.push((temp.Loisirs[1] - isValuable(res.ongoing.Loisirs)) / dayLeft)
+	temp.Loisirs.push((isValuable(res.previous.Revenue) * 0.3).toFixed(2))
+	temp.Loisirs.push((isValuable(res.ongoing.Revenue) * 0.3).toFixed(2))
+	temp.Loisirs.push(((temp.Loisirs[0] - isValuable(res.previous.Loisirs)) / dayLeft).toFixed(2))
+	temp.Loisirs.push(((temp.Loisirs[1] - isValuable(res.ongoing.Loisirs)) / dayLeft).toFixed(2))
 
 	temp.Epargne = [];
-	temp.Epargne.push(isValuable(res.previous.Revenue) * 0.2)
-	temp.Epargne.push(isValuable(res.ongoing.Revenue) * 0.2)
-	temp.Epargne.push((temp.Epargne[0] - isValuable(res.previous.Epargne)) / dayLeft)
-	temp.Epargne.push((temp.Epargne[1] - isValuable(res.ongoing.Epargne)) / dayLeft)
+	temp.Epargne.push((isValuable(res.previous.Revenue) * 0.2).toFixed(2))
+	temp.Epargne.push((isValuable(res.ongoing.Revenue) * 0.2).toFixed(2))
+	temp.Epargne.push(((temp.Epargne[0] - isValuable(res.previous.Epargne)) / dayLeft).toFixed(2))
+	temp.Epargne.push(((temp.Epargne[1] - isValuable(res.ongoing.Epargne)) / dayLeft).toFixed(2))
 
 	temp.Obligations = [];
-	temp.Obligations.push(isValuable(res.previous.Revenue) * 0.5)
-	temp.Obligations.push(isValuable(res.ongoing.Revenue) * 0.5)
-	temp.Obligations.push((temp.Obligations[0] - isValuable(res.previous.Obligations)) / dayLeft)
-	temp.Obligations.push((temp.Obligations[1] - isValuable(res.ongoing.Obligations)) / dayLeft)
+	temp.Obligations.push((isValuable(res.previous.Revenue) * 0.5).toFixed(2))
+	temp.Obligations.push((isValuable(res.ongoing.Revenue) * 0.5).toFixed(2))
+	temp.Obligations.push(((temp.Obligations[0] - isValuable(res.previous.Obligations)) / dayLeft).toFixed(2))
+	temp.Obligations.push(((temp.Obligations[1] - isValuable(res.ongoing.Obligations)) / dayLeft).toFixed(2))
 
 	temp.Revenue = [];
-	temp.Revenue.push(isValuable(res.previous.Revenue))
-	temp.Revenue.push(isValuable(res.ongoing.Revenue))
-	temp.Revenue.push((isValuable(res.previous.Revenue) - (isValuable(res.previous.Loisirs) + isValuable(res.previous.Epargne) + isValuable(res.previous.Obligations))) / dayLeft)
-	temp.Revenue.push((isValuable(res.ongoing.Revenue) - (isValuable(res.ongoing.Loisirs) + isValuable(res.ongoing.Epargne) + isValuable(res.ongoing.Obligations))) / dayLeft)
+	temp.Revenue.push((isValuable(res.previous.Revenue)).toFixed(2))
+	temp.Revenue.push((isValuable(res.ongoing.Revenue)).toFixed(2))
+	temp.Revenue.push(((isValuable(res.previous.Revenue) - (isValuable(res.previous.Loisirs) + isValuable(res.previous.Epargne) + isValuable(res.previous.Obligations))) / dayLeft).toFixed(2))
+	temp.Revenue.push(((isValuable(res.ongoing.Revenue) - (isValuable(res.ongoing.Loisirs) + isValuable(res.ongoing.Epargne) + isValuable(res.ongoing.Obligations))) / dayLeft).toFixed(2))
 
 	res.quotas = temp;
 	temp = {};
