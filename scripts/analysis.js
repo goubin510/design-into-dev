@@ -5,6 +5,9 @@ module.exports = {
   bar: function (e) {
     console.log("e", e)
   },
+  list: function (e) {
+  	return e;
+  },
   basics: function (e) {
   	var res = {};
   	var temp = {};

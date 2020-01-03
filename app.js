@@ -70,6 +70,14 @@ app.post('/', function (req, res) {
 	});
 })
 
+app.post('/list', function (req, res) {
+	Info.find(req.body, function(err, info) {
+		if (err)
+			res.send(err);
+			res.json(analysis.list(info));
+	});
+})
+
 app.get('/raw', function (req, res) {
 	Info.find({}, function(err, info) {
 		if (err)

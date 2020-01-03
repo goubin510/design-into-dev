@@ -155,25 +155,26 @@
 		<div class="col">
 			<button class="btn info" onclick="openMod()">Add Data</button>
 			<h1>Results :</h1>
+			<p>{{plop}}</p>
 		</div>	
 		<div class="col"></div>
 	</div>
 
 	<div class="row analysis">
 		<div class="col-1">
-			{{plop}}
+			init ...
 		</div>
 		<div class="col">
-			{{blop}}
+			init ...
 		</div>
 		<div class="col">
-			{{blop}}
+			init ...
 		</div>
 		<div class="col">
-			{{blop}}
+			init ...
 		</div>
 		<div class="col-1">
-			{{plop}}
+			init ...
 		</div>
 	</div>
 
@@ -236,7 +237,11 @@
 <!-- ___________________________ACTION___________________________ -->
 	<div class="row analysisBis">
 		<div class="col">
-			<button class="btn btn-warning" id="work">Run Analysis</button>
+			<button class="btn btn-warning" id="work" ng-click="loadList()">Run Analysis</button>
+
+			<p ng-repeat="x in blop">
+				{{ x }}
+			</p>
 		</div>
 	</div>
 
@@ -261,6 +266,19 @@
 				.then(function(response) {
 					$scope.plop = response.data;
 			});
+
+			$scope.loadList = function() {
+				console.log("plop")
+				$http({
+					method : "POST",
+					url : "/list",
+					data: json
+				})
+				.then(function(response) {
+					console.log(response.data)
+					$scope.blop = response.data;
+				});
+			}
 			
 	});
 
@@ -268,7 +286,7 @@
 		$(".entry").hide()
 		$(".analysis").show()
 
-		load();
+		//load();
 	} else {
 		$(".entry").show()
 		$(".analysis").hide()
@@ -276,10 +294,6 @@
 
 	$("#send").click(function(){
 		postData();
-	});
-
-	$("#work").click(function(){
-		analyse();
 	});
 
 	function openMod() {
