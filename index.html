@@ -141,7 +141,7 @@
 <!-- ___________________________PASSPHRASE___________________________ -->
 	<div class="form-group row entry">
 		<div class="col">
-			<form>
+			<form action="/home">
 				<label for="pwd">Passphrase:</label>
 				<input type="text" name="id" class="form-control" id="passPhrase">
 				<input type="submit" class="btn btn-info">
@@ -161,21 +161,63 @@
 	</div>
 
 	<div class="row analysis">
-		<div class="col-1">
-			init ...
-		</div>
+		<div class="col-1"></div>
+
 		<div class="col">
-			init ...
+			<h3>previous</h3>
+			<p>
+				Revenue : {{plop.previous.Revenue}}
+			</p>
+			<p>
+				Obligations : {{plop.previous.Obligations}}
+			</p>
+			<p>
+				Loisirs : {{plop.previous.Loisirs}}
+			</p>
+			<p>
+				Epargne : {{plop.previous.Epargne}}
+			</p>
 		</div>
+
 		<div class="col">
-			init ...
+			<h3>today</h3>
+			<p>
+				Revenue : {{plop.today.Revenue}}
+			</p>
+			<p>
+				Obligations : {{plop.today.Obligations}}
+			</p>
+			<p>
+				Loisirs : {{plop.today.Loisirs}}
+			</p>
+			<p>
+				Epargne : {{plop.today.Epargne}}
+			</p>
 		</div>
+
 		<div class="col">
-			init ...
+			<h3>ongoing</h3>
+			<p>
+				Revenue : {{plop.ongoing.Revenue}}
+			</p>
+			<p>
+				Obligations : {{plop.ongoing.Obligations}}
+			</p>
+			<p>
+				Loisirs : {{plop.ongoing.Loisirs}}
+			</p>
+			<p>
+				Epargne : {{plop.ongoing.Epargne}}
+			</p>
 		</div>
-		<div class="col-1">
-			init ...
+
+		<div class="col">
+			<h3>quotas</h3>
+			<p></p>
+			
 		</div>
+
+		<div class="col-1"></div>
 	</div>
 
 <!-- ___________________________ANALYSIS___________________________ -->
@@ -237,7 +279,9 @@
 <!-- ___________________________ACTION___________________________ -->
 	<div class="row analysisBis">
 		<div class="col">
-			<button class="btn btn-warning" id="work" ng-click="loadList()">Run Analysis</button>
+			<button class="btn btn-warning" id="work" ng-click="loadList()">
+				Run Analysis
+			</button>
 
 			<p ng-repeat="x in blop">
 				{{ x }}
@@ -253,7 +297,7 @@
 
 	app.controller('myCtrl', function($scope, $http) {
 			$scope.plop = "init..."
-			$scope.blop = "init..."
+			$scope.blop = ["init..."]
 
 			var json = {};
 			json.identificationStr = urlParams.get("id");
@@ -285,11 +329,13 @@
 	if(urlParams.get("id")){
 		$(".entry").hide()
 		$(".analysis").show()
+		$(".analysisBis").show()
 
 		//load();
 	} else {
 		$(".entry").show()
 		$(".analysis").hide()
+		$(".analysisBis").hide()
 	}
 
 	$("#send").click(function(){
