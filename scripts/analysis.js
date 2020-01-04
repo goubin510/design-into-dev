@@ -31,7 +31,7 @@ module.exports = {
 //Today
 	date = new Date();
 	date.setDate(date.getDate())
-	date.setHours(0,0,0);
+	date.setHours(0,0,0,0);
 
   	for (var i = 0; i < e.length; i++) {
   		if(e[i].date >= date) {
