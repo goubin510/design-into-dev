@@ -15,7 +15,7 @@ module.exports = {
 //Previous
 	var date = new Date();
 	date.setDate(date.getDate() - 1)
-	date.setHours(23,59,59);
+	date.setHours(23,59,59,999);
 
   	for (var i = 0; i < e.length; i++) {
   		if(e[i].date < date) {

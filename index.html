@@ -161,8 +161,6 @@
 	</div>
 
 	<div class="row analysis">
-		<div class="col-1"></div>
-
 		<div class="col">
 			<h3>previous</h3>
 			<p>
@@ -213,66 +211,23 @@
 
 		<div class="col">
 			<h3>quotas</h3>
-			<p></p>
+			<p>
+				Revenue : {{plop.quotas.Revenue[2]}} ({{plop.quotas.Revenue[3]}}) / 
+				{{plop.ongoing.Revenue}} ({{plop.quotas.Revenue[0]}})
+			</p>
+			<p>
+				Obligations : {{plop.quotas.Obligations[2]}} ({{plop.quotas.Obligations[3]}}) / 
+				{{plop.ongoing.Obligations}} ({{plop.quotas.Obligations[0]}})
+			</p>
+			<p>
+				Loisirs : {{plop.quotas.Loisirs[2]}} ({{plop.quotas.Loisirs[3]}}) / 
+				{{plop.ongoing.Loisirs}} ({{plop.quotas.Loisirs[0]}})
+			</p>
+			<p>
+				Epargne : {{plop.quotas.Epargne[2]}} ({{plop.quotas.Epargne[3]}}) / 
+				{{plop.ongoing.Epargne}} ({{plop.quotas.Epargne[0]}})
+			</p>
 			
-		</div>
-
-		<div class="col-1"></div>
-	</div>
-
-<!-- ___________________________ANALYSIS___________________________ -->
-	<div class="row analysisBis">
-
-<!-- ___________________________A QUOTAS___________________________ -->
-		<div class="col">
-			<h2>Daily Quota</h2>
-			<p>
-				Desires : <strong id="desiresQuota"></strong> €
-			</p>
-			<p>
-				Savings : <strong id="savingsQuota"></strong> €
-			</p>
-			<p>
-				Needs : <strong id="needsQuota"></strong> €
-			</p>
-		</div>
-
-<!-- ___________________________A OVERVIEW___________________________ -->
-		<div class="col">
-			<h2>Overview</h2>
-			<p>
-				Desires : <strong id="desiresSpent"></strong>
-				(<light id="desiresSpentRatio"></light>)
-			</p>
-			<p>
-				Savings : <strong id="savingsSpent"></strong>
-				(<light id="savingsSpentRatio"></light>)
-			</p>
-			<p>
-				Needs : <strong id="needsSpent"></strong>
-				(<light id="needsSpentRatio"></light>)
-			</p>
-			<p>
-				Revenue : <strong id="revenueSpent"></strong>
-				(<light id="revenueSpentRatio"></light>)
-			</p>
-		</div>
-
-<!-- ___________________________A FORECAST___________________________ -->
-		<div class="col">
-			<h2>Forecast</h2>
-			<p>
-				Desires : <strong id="desiresFutureQuota"></strong> €
-				(<light id="desiresRest"></light> €)
-			</p>
-			<p>
-				Savings : <strong id="savingsFutureQuota"></strong> €
-				(<light id="savingsRest"></light> €)
-			</p>
-			<p>
-				Needs : <strong id="needsFutureQuota"></strong> €
-				(<light id="needsRest"></light> €)
-			</p>
 		</div>
 	</div>
 
@@ -312,14 +267,12 @@
 			});
 
 			$scope.loadList = function() {
-				console.log("plop")
 				$http({
 					method : "POST",
 					url : "/list",
 					data: json
 				})
 				.then(function(response) {
-					console.log(response.data)
 					$scope.blop = response.data;
 				});
 			}
@@ -356,7 +309,6 @@
 
 			$.post("/", json, function(data){
 
-				console.log(data)
 			});
 	}
 
