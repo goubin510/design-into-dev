@@ -50,7 +50,9 @@ var Info = mongoose.model('Info', InfoSchema);
 
 // Endpoints
 app.get('/', function(req, res) {
-	res.send('C Live !')
+	res.send('C Live ! <br>' + 
+		' <a href="/home">go to /home</>'
+		)
 })
 app.get('/home', function(req, res) {
 

@@ -18,12 +18,16 @@
 	<!-- Angular JS -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
+	<!-- Frapp.io -->
+	<script src="https://cdn.jsdelivr.net/npm/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
+
 	<style type="text/css">
 		#raw {
 			margin: 20px;
 		}
 		.row {
-			padding: 10px;
+			margin: 2%;
+			max-width: 98%;
 		}
 		.col, .col-2, .col-1 {
 			min-width: 130px;
@@ -107,7 +111,9 @@
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
 <!-- ___________________________HEADER___________________________ -->
-	<h1>Manage your spendings !</h1>
+	<div class="row">
+		<h1 class="col">Manage your spendings !</h1>
+	</div>
 
 <!-- ___________________________OVERLAY___________________________ -->
 	<div id="myNav" class="overlay">
@@ -151,81 +157,93 @@
 
 <!-- ___________________________RESULT___________________________ -->
 	<div class="row analysis">
-		<div class="col"></div>
+		<div class="col-1"></div>
 		<div class="col">
 			<button class="btn info" onclick="openMod()">Add Data</button>
-			<h1>Results :</h1>
-			<p>{{plop}}</p>
+			<h2>Results :</h2>
+
 		</div>	
 		<div class="col"></div>
 	</div>
 
 	<div class="row analysis">
 		<div class="col">
-			<h3>previous</h3>
+			<h3>∑ à Hier</h3>
 			<p>
-				Revenue : {{plop.previous.Revenue}}
+				Revenue : {{spentData.previous.Revenue | number: 2}}
 			</p>
 			<p>
-				Obligations : {{plop.previous.Obligations}}
+				Obligations : {{spentData.previous.Obligations | number: 2}}
 			</p>
 			<p>
-				Loisirs : {{plop.previous.Loisirs}}
+				Loisirs : {{spentData.previous.Loisirs | number: 2}}
 			</p>
 			<p>
-				Epargne : {{plop.previous.Epargne}}
-			</p>
-		</div>
-
-		<div class="col">
-			<h3>today</h3>
-			<p>
-				Revenue : {{plop.today.Revenue}}
-			</p>
-			<p>
-				Obligations : {{plop.today.Obligations}}
-			</p>
-			<p>
-				Loisirs : {{plop.today.Loisirs}}
-			</p>
-			<p>
-				Epargne : {{plop.today.Epargne}}
+				Epargne : {{spentData.previous.Epargne | number: 2}}
 			</p>
 		</div>
 
 		<div class="col">
-			<h3>ongoing</h3>
+			<h3>∑ Aujourd'hui</h3>
 			<p>
-				Revenue : {{plop.ongoing.Revenue}}
+				Revenue : {{spentData.today.Revenue | number: 2}}
+
 			</p>
 			<p>
-				Obligations : {{plop.ongoing.Obligations}}
+				Obligations : {{spentData.today.Obligations | number: 2}}
+				( {{spentData.quotas.Obligations[2] | number: 2}} )
 			</p>
 			<p>
-				Loisirs : {{plop.ongoing.Loisirs}}
+				Loisirs : {{spentData.today.Loisirs | number: 2}}
+				( {{spentData.quotas.Loisirs[2] | number: 2}} )
 			</p>
 			<p>
-				Epargne : {{plop.ongoing.Epargne}}
+				Epargne : {{spentData.today.Epargne | number: 2}}
+				( {{spentData.quotas.Epargne[2] | number: 2}} )
 			</p>
 		</div>
 
 		<div class="col">
-			<h3>quotas</h3>
+			<h3>= Total</h3>
 			<p>
-				Revenue : {{plop.quotas.Revenue[2]}} ({{plop.quotas.Revenue[3]}}) / 
-				{{plop.ongoing.Revenue}} ({{plop.quotas.Revenue[0]}})
+				Revenue : {{spentData.ongoing.Epargne + spentData.ongoing.Loisirs + spentData.ongoing.Obligations | number: 2}}
+				( {{spentData.ongoing.Revenue | number: 2}} )
 			</p>
 			<p>
-				Obligations : {{plop.quotas.Obligations[2]}} ({{plop.quotas.Obligations[3]}}) / 
-				{{plop.ongoing.Obligations}} ({{plop.quotas.Obligations[0]}})
+				Obligations : {{spentData.ongoing.Obligations | number: 2}}
+				( {{spentData.quotas.Obligations[0] | number: 2}} )
 			</p>
 			<p>
-				Loisirs : {{plop.quotas.Loisirs[2]}} ({{plop.quotas.Loisirs[3]}}) / 
-				{{plop.ongoing.Loisirs}} ({{plop.quotas.Loisirs[0]}})
+				Loisirs : {{spentData.ongoing.Loisirs | number: 2}}
+				( {{spentData.quotas.Loisirs[0] | number: 2}} )
 			</p>
 			<p>
-				Epargne : {{plop.quotas.Epargne[2]}} ({{plop.quotas.Epargne[3]}}) / 
-				{{plop.ongoing.Epargne}} ({{plop.quotas.Epargne[0]}})
+				Epargne : {{spentData.ongoing.Epargne | number: 2}}
+				( {{spentData.quotas.Epargne[0] | number: 2}} )
+			</p>
+		</div>
+
+		<div class="col">
+			<h3>=> Impacts</h3>
+			<p>
+				Revenue :
+				{{spentData.quotas.Revenue[3] | number: 2}} 
+				( {{spentData.ongoing.Revenue - spentData.ongoing.Epargne - spentData.ongoing.Loisirs - spentData.ongoing.Obligations | number: 2}} )
+			</p>
+			<p>
+				Obligations :
+				{{spentData.quotas.Obligations[3] | number: 2}} 
+				( {{spentData.quotas.Obligations[0] - spentData.ongoing.Obligations | number: 2}} )
+			</p>
+			<p>
+				Loisirs :
+				{{spentData.quotas.Loisirs[3] | number: 2}} 
+				( {{spentData.quotas.Loisirs[0] - spentData.ongoing.Loisirs | number: 2}} )
+			</p>
+			<p>
+				Epargne :
+				{{spentData.quotas.Epargne[3] | number: 2}} 
+				( {{spentData.quotas.Epargne[0] - spentData.ongoing.Epargne | number: 2}} )
 			</p>
 			
 		</div>
@@ -233,14 +251,63 @@
 
 <!-- ___________________________ACTION___________________________ -->
 	<div class="row analysisBis">
-		<div class="col">
+		<div class="col-2">
 			<button class="btn btn-warning" id="work" ng-click="loadList()">
 				Run Analysis
 			</button>
+		</div>
+	</div>
 
-			<p ng-repeat="x in blop">
-				{{ x }}
-			</p>
+	<div class="row">
+		<div class="col-1"></div>
+		
+		<div class="col" id="chart"></div>
+
+		<div class="col-1"></div>
+	</div>
+
+<!-- ___________________________RESTITUTION___________________________ -->
+	<div class="row analysisBis">
+		<div class="col">
+			<h4>Revenue</h4>
+			<div ng-repeat="x in detailsList | orderBy:'date'">
+				<p ng-if="x.category == 'Revenue'">
+					{{x.date | date:"HH'h'mm MM/dd/yyyy"}} <br>
+					{{ x.description }} :
+					{{ x.amount | number: 2 }} €
+				</p>
+			</div>
+		</div>
+
+		<div class="col">
+			<h4>Obligations</h4>
+			<div ng-repeat="x in detailsList | orderBy:'date'">
+				<p ng-if="x.category == 'Obligations'">
+					{{x.date | date:"HH'h'mm MM/dd/yyyy"}} <br>
+					{{ x.description }} :
+					{{ x.amount | number: 2 }} €
+				</p>
+			</div>
+		</div>
+		<div class="col">
+			<h4>Loisirs</h4>
+			<div ng-repeat="x in detailsList | orderBy:'date'">
+				<p ng-if="x.category == 'Loisirs'">
+					{{x.date | date:"HH'h'mm MM/dd/yyyy"}} <br>
+					{{ x.description }} :
+					{{ x.amount | number: 2 }} €
+				</p>
+			</div>
+		</div>
+		<div class="col">
+			<h4>Epargne</h4>
+			<div ng-repeat="x in detailsList | orderBy:'date'">
+				<p ng-if="x.category == 'Epargne'">
+					{{x.date | date:"HH'h'mm MM/dd/yyyy"}} <br>
+					{{ x.description }} :
+					{{ x.amount | number: 2 }} €
+				</p>
+			</div>
 		</div>
 	</div>
 
@@ -251,8 +318,8 @@
 	var app = angular.module('myApp', []);
 
 	app.controller('myCtrl', function($scope, $http) {
-			$scope.plop = "init..."
-			$scope.blop = ["init..."]
+			$scope.spentData = "init..."
+			$scope.detailsList = ["init..."]
 
 			var json = {};
 			json.identificationStr = urlParams.get("id");
@@ -263,7 +330,7 @@
 					data: json
 				})
 				.then(function(response) {
-					$scope.plop = response.data;
+					$scope.spentData = response.data;
 			});
 
 			$scope.loadList = function() {
@@ -273,7 +340,8 @@
 					data: json
 				})
 				.then(function(response) {
-					$scope.blop = response.data;
+					$scope.detailsList = response.data;
+					loadChart(response.data);
 				});
 			}
 			
@@ -294,6 +362,99 @@
 	$("#send").click(function(){
 		postData();
 	});
+
+	function loadChart (e) {
+		var composite = {};
+		var temp = e;
+		var chartData = {};
+		var date = new Date();
+
+		for (var i = 0; i < temp.length; i++) {
+			var tempD = new Date(temp[i].date);
+			
+			temp[i].dateNum = tempD.getDate();
+
+			if(temp[i].dateNum > max)
+				max = temp[i].dateNum;
+		}
+
+		temp.sort(function (a, b) {
+		  return a.dateNum - b.dateNum;
+		});
+
+		var max = date.getDate() + 1;
+
+		var labels = [];
+		var final = {}
+		final.Revenue = [];
+		final.Obligations = [];
+		final.Loisirs = [];
+		final.Epargne = [];
+
+		labels.length = max;
+		final.Revenue.length = max;
+		final.Obligations.length = max;
+		final.Loisirs.length = max;
+		final.Epargne.length = max;
+
+		for (var i = 0; i < labels.length; i++) {
+			labels[i] = i;
+			final.Revenue[i] = 0;
+			final.Obligations[i] = 0;
+			final.Loisirs[i] = 0;
+			final.Epargne[i] = 0;
+		}
+
+		for (var i = 0; i < temp.length; i++) {
+			final[temp[i].category][temp[i].dateNum] = decimaux(temp[i].amount + final[temp[i].category][temp[i].dateNum]);
+		}
+
+		console.log(temp)
+		console.log(max)
+		console.log(labels)
+		console.log(final)
+
+		const data = {
+		    labels: labels,
+		    datasets: [
+		        {
+		            name: "Revenue", chartType: "bar",
+		            values: final.Revenue
+		        },
+		        {
+		            name: "Obligations", chartType: "bar",
+		            values: final.Obligations
+		        },
+		        {
+		            name: "Loisirs", chartType: "bar",
+		            values: final.Loisirs
+		        },
+		        {
+		            name: "Epargne", chartType: "bar",
+		            values: final.Epargne
+		        }
+		    ]
+		}
+
+		const chart = new frappe.Chart("#chart", {  // or a DOM element,
+		                                            // new Chart() in case of ES6 module with above usage
+		    title: "My Awesome Chart",
+		    data: data,
+		    type: 'axis-mixed', // or 'bar', 'line', 'scatter', 'pie', 'percentage'
+		    height: 250,
+		    colors: ['#7cd6fd', '#743ee2']
+		})
+	}
+
+	function decimaux(e) {
+		var temp = e*100 + '';
+		temp = temp.split('.')[0]
+		temp = parseInt(temp);
+		temp = (temp/100).toFixed(2)
+		temp = parseFloat(temp)
+		console.log(temp)
+		return temp
+	}
 
 	function openMod() {
 	  document.getElementById("myNav").style.width = "100%";
