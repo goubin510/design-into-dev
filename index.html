@@ -112,7 +112,7 @@
 <body ng-app="myApp" ng-controller="myCtrl">
 <!-- ___________________________HEADER___________________________ -->
 	<div class="row">
-		<h1 class="col">Manage your spendings !</h1>
+		<h1 class="col">Save my Money !</h1>
 	</div>
 
 <!-- ___________________________OVERLAY___________________________ -->
@@ -224,7 +224,7 @@
 		</div>
 
 		<div class="col">
-			<h3>=> Impacts</h3>
+			<h3>=> Impacts & Rest</h3>
 			<p>
 				Revenue :
 				{{spentData.quotas.Revenue[3] | number: 2}} 
@@ -255,6 +255,30 @@
 			<button class="btn btn-warning" id="work" ng-click="loadList()">
 				Run Analysis
 			</button>
+		</div>
+
+		<div class="col">
+			<table class="table">
+    			<thead class="thead-dark">
+					<tr>
+						<th>Firstname</th>
+						<th>Lastname</th>
+						<th>Email</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>John</td>
+						<td>Doe</td>
+						<td>john@example.com</td>
+					</tr>
+					<tr>
+						<td>Mary</td>
+						<td>Moe</td>
+						<td>mary@example.com</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 
@@ -311,6 +335,12 @@
 		</div>
 	</div>
 
+	<div class="container" id="alertDiv">
+		<div class="alert alert-warning alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<strong>Warning!</strong> This alert box could indicate a warning that might need attention.
+		</div>
+	</div>
 
 </body>
 <script type="text/javascript">
@@ -485,6 +515,8 @@
 
 		$.post("/data", json,
 		function(res){
+			console.log(res)
+
 			$("#amountDesc").val("");
 			$("#amount").val(0);
 			closeMod();

@@ -41,13 +41,6 @@ var InfoSchema = new Schema({
 });
 var Info = mongoose.model('Info', InfoSchema);
 
-// Info.deleteMany({}, function(err, info) {
-// 	if (err)
-// 		res.send(err);
-// 	console.log()
-// 	console.log('Infos successfully deleted');
-// });
-
 // Endpoints
 app.get('/', function(req, res) {
 	res.send('C Live ! <br>' + 
@@ -85,6 +78,24 @@ app.get('/raw', function (req, res) {
 		if (err)
 			res.send(err);
 			res.json(info);
+	});
+})
+
+app.get('/report', function (req, res) {
+	Info.aggregate( [ {"$group" : {_id:"$identificationStr", count:{$sum:1}}} ], 
+		function(err, info) {
+			if(err)
+				res.send(err);
+				res.json(info);
+				
+		})
+})
+
+app.get('/rmTest', function (req, res) {
+	Info.deleteMany({identificationStr: "test"}, function(err, info) {
+		if (err)
+			res.send(JSON.stringify(err));
+			res.send(JSON.stringify(info));
 	});
 })
 
