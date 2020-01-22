@@ -34,12 +34,17 @@ var InfoSchema = new Schema({
   category: {
   	type: String,
   },
+  amex: {
+  	type: Boolean,
+  },
   identificationStr: {
   	type: String,
   	required: 'Please set a passphrase'
   }
 });
 var Info = mongoose.model('Info', InfoSchema);
+
+// ------------------------------------------------------------------------
 
 // Endpoints
 app.get('/', function(req, res) {
@@ -74,7 +79,7 @@ app.post('/list', function (req, res) {
 })
 
 app.get('/raw', function (req, res) {
-	Info.find({}, function(err, info) {
+	Info.find({"identificationStr": "agoubinPRD"}, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(info);
@@ -107,6 +112,8 @@ app.post('/data', function(req, res) {
 	 		res.json(JSON.stringify(info));
 	});
 })
+
+// ------------------------------------------------------------------------
 
 // Redirection & launch app
 

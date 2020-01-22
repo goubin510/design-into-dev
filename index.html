@@ -22,6 +22,15 @@
 	<script src="https://cdn.jsdelivr.net/npm/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
 
 	<style type="text/css">
+		th {
+			background-color: grey;
+			color: #fff;
+			border-width: 1px;
+			font-weight: normal;
+		}
+		#amex {
+			margin-right: 50%;
+		}
 		#raw {
 			margin: 20px;
 		}
@@ -138,6 +147,9 @@
 
 				<label for="date">Date:</label>
 				<input type="date" class="form-control" id="date">
+
+				<label for="amex">amex:</label>
+				<input type="checkbox" id="amex">
 
 				<button class="btn btn-primary" id="send">Send</button>
 			</div>
@@ -261,19 +273,29 @@
 			<table class="table">
     			<thead class="thead-dark">
 					<tr>
-						<th>Firstname</th>
-						<th>Lastname</th>
-						<th>Email</th>
+						<th>Type</th>
+						<td>Lastname</td>
+						<td>Email</td>
+					</tr>
+					<tr>
+						<th>Revenue</th>
+						<td>Lastname</td>
+						<td>Email</td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>John</td>
+						<th>Obligations</th>
 						<td>Doe</td>
 						<td>john@example.com</td>
 					</tr>
 					<tr>
-						<td>Mary</td>
+						<th>Loisirs</th>
+						<td>Moe</td>
+						<td>mary@example.com</td>
+					</tr>
+					<tr>
+						<th>Epargne</th>
 						<td>Moe</td>
 						<td>mary@example.com</td>
 					</tr>
@@ -482,7 +504,7 @@
 		temp = parseInt(temp);
 		temp = (temp/100).toFixed(2)
 		temp = parseFloat(temp)
-		console.log(temp)
+
 		return temp
 	}
 
@@ -494,22 +516,16 @@
 	  document.getElementById("myNav").style.width = "0%";
 	}
 
-	function load(){
-			var json = {};
-			json.identificationStr = urlParams.get("id");
-
-			$.post("/", json, function(data){
-
-			});
-	}
-
 	function postData(){
 		var json = {};
 
 		json.description = $("#amountDesc").val();
 		json.amount = $("#amount").val();
 		json.category = $("#category").val();
+		json.amex = $("#amex").is(":checked");
 		json.identificationStr = urlParams.get("id");
+
+		console.log(json)
 
 		json.date = () => {if($("#date").val()) return $("#date").val(); else return Date.now()}
 
@@ -518,9 +534,10 @@
 			console.log(res)
 
 			$("#amountDesc").val("");
-			$("#amount").val(0);
+			$("#amount").val("");
+			$("#date").val("");
+			$("#amex").prop( "checked", false );
 			closeMod();
-			load();
 		});
 	}
 </script>
