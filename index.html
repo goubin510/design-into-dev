@@ -177,88 +177,52 @@
 		</div>	
 		<div class="col"></div>
 	</div>
-
-	<div class="row analysis">
+	<div>
+		<div class="col-1"></div>
 		<div class="col">
-			<h3>∑ à Hier</h3>
-			<p>
-				Revenue : {{spentData.previous.Revenue | number: 2}}
-			</p>
-			<p>
-				Obligations : {{spentData.previous.Obligations | number: 2}}
-			</p>
-			<p>
-				Loisirs : {{spentData.previous.Loisirs | number: 2}}
-			</p>
-			<p>
-				Epargne : {{spentData.previous.Epargne | number: 2}}
-			</p>
+			<table class="table">
+    			<thead class="thead-dark">
+					<tr>
+						<th>Date</th>
+						<th>YTD</th>
+						<th>MTD</th>
+						<th>Today</th>
+						<th>Analysis</th>
+					</tr>
+					<tr>
+						<th>Revenue</th>
+						<td>{{spentData.previous.Revenue | number: 2}}</td>
+						<td>{{spentData.previous.Revenue | number: 2}}</td>
+						<td>{{spentData.today.Revenue | number: 2}}</td>
+						<td>{{spentData.today.Revenue | number: 2}}</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>Obligations</th>
+						<td>{{spentData.previous.Obligations | number: 2}}</td>
+						<td>{{spentData.previous.Obligations | number: 2}}</td>
+						<td>{{spentData.today.Obligations | number: 2}}</td>
+						<td>{{spentData.today.Obligations | number: 2}}</td>
+					</tr>
+					<tr>
+						<th>Loisirs</th>
+						<td>Moe</td>
+						<td>mary@example.com</td>
+						<td>mary@example.com</td>
+						<td>mary@example.com</td>
+					</tr>
+					<tr>
+						<th>Epargne</th>
+						<td>Moe</td>
+						<td>mary@example.com</td>
+						<td>mary@example.com</td>
+						<td>mary@example.com</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
-
-		<div class="col">
-			<h3>∑ Aujourd'hui</h3>
-			<p>
-				Revenue : {{spentData.today.Revenue | number: 2}}
-
-			</p>
-			<p>
-				Obligations : {{spentData.today.Obligations | number: 2}}
-				( {{spentData.quotas.Obligations[2] | number: 2}} )
-			</p>
-			<p>
-				Loisirs : {{spentData.today.Loisirs | number: 2}}
-				( {{spentData.quotas.Loisirs[2] | number: 2}} )
-			</p>
-			<p>
-				Epargne : {{spentData.today.Epargne | number: 2}}
-				( {{spentData.quotas.Epargne[2] | number: 2}} )
-			</p>
-		</div>
-
-		<div class="col">
-			<h3>= Total</h3>
-			<p>
-				Revenue : {{spentData.ongoing.Epargne + spentData.ongoing.Loisirs + spentData.ongoing.Obligations | number: 2}}
-				( {{spentData.ongoing.Revenue | number: 2}} )
-			</p>
-			<p>
-				Obligations : {{spentData.ongoing.Obligations | number: 2}}
-				( {{spentData.quotas.Obligations[0] | number: 2}} )
-			</p>
-			<p>
-				Loisirs : {{spentData.ongoing.Loisirs | number: 2}}
-				( {{spentData.quotas.Loisirs[0] | number: 2}} )
-			</p>
-			<p>
-				Epargne : {{spentData.ongoing.Epargne | number: 2}}
-				( {{spentData.quotas.Epargne[0] | number: 2}} )
-			</p>
-		</div>
-
-		<div class="col">
-			<h3>=> Impacts & Rest</h3>
-			<p>
-				Revenue :
-				{{spentData.quotas.Revenue[3] | number: 2}} 
-				( {{spentData.ongoing.Revenue - spentData.ongoing.Epargne - spentData.ongoing.Loisirs - spentData.ongoing.Obligations | number: 2}} )
-			</p>
-			<p>
-				Obligations :
-				{{spentData.quotas.Obligations[3] | number: 2}} 
-				( {{spentData.quotas.Obligations[0] - spentData.ongoing.Obligations | number: 2}} )
-			</p>
-			<p>
-				Loisirs :
-				{{spentData.quotas.Loisirs[3] | number: 2}} 
-				( {{spentData.quotas.Loisirs[0] - spentData.ongoing.Loisirs | number: 2}} )
-			</p>
-			<p>
-				Epargne :
-				{{spentData.quotas.Epargne[3] | number: 2}} 
-				( {{spentData.quotas.Epargne[0] - spentData.ongoing.Epargne | number: 2}} )
-			</p>
-			
-		</div>
+		<div class="col-1"></div>
 	</div>
 
 <!-- ___________________________ACTION___________________________ -->
@@ -267,40 +231,6 @@
 			<button class="btn btn-warning" id="work" ng-click="loadList()">
 				Run Analysis
 			</button>
-		</div>
-
-		<div class="col">
-			<table class="table">
-    			<thead class="thead-dark">
-					<tr>
-						<th>Type</th>
-						<td>Lastname</td>
-						<td>Email</td>
-					</tr>
-					<tr>
-						<th>Revenue</th>
-						<td>Lastname</td>
-						<td>Email</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<th>Obligations</th>
-						<td>Doe</td>
-						<td>john@example.com</td>
-					</tr>
-					<tr>
-						<th>Loisirs</th>
-						<td>Moe</td>
-						<td>mary@example.com</td>
-					</tr>
-					<tr>
-						<th>Epargne</th>
-						<td>Moe</td>
-						<td>mary@example.com</td>
-					</tr>
-				</tbody>
-			</table>
 		</div>
 	</div>
 
@@ -373,26 +303,23 @@
 			$scope.spentData = "init..."
 			$scope.detailsList = ["init..."]
 
-			var json = {};
-			json.identificationStr = urlParams.get("id");
-
 			$http({
-					method : "POST",
-					url : "/",
-					data: json
+					method : "GET",
+					url : "/home/data/" + urlParams.get("id")
 				})
 				.then(function(response) {
 					$scope.spentData = response.data;
+					console.log(response)
 			});
 
 			$scope.loadList = function() {
 				$http({
-					method : "POST",
-					url : "/list",
-					data: json
+					method : "GET",
+					url : "/home/details/" + urlParams.get("id")
 				})
 				.then(function(response) {
 					$scope.detailsList = response.data;
+					console.log(response)
 					loadChart(response.data);
 				});
 			}
@@ -430,6 +357,8 @@
 				max = temp[i].dateNum;
 		}
 
+		console.log(temp)
+
 		temp.sort(function (a, b) {
 		  return a.dateNum - b.dateNum;
 		});
@@ -460,11 +389,6 @@
 		for (var i = 0; i < temp.length; i++) {
 			final[temp[i].category][temp[i].dateNum] = decimaux(temp[i].amount + final[temp[i].category][temp[i].dateNum]);
 		}
-
-		console.log(temp)
-		console.log(max)
-		console.log(labels)
-		console.log(final)
 
 		const data = {
 		    labels: labels,
@@ -525,11 +449,9 @@
 		json.amex = $("#amex").is(":checked");
 		json.identificationStr = urlParams.get("id");
 
-		console.log(json)
-
 		json.date = () => {if($("#date").val()) return $("#date").val(); else return Date.now()}
 
-		$.post("/data", json,
+		$.post("/home/data", json,
 		function(res){
 			console.log(res)
 

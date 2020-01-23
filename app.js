@@ -52,41 +52,51 @@ app.get('/', function(req, res) {
 		' <a href="/home">go to /home</>'
 		)
 })
+
 app.get('/home', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
-app.get('/home/:id', function(req, res) {
-	console.log(req.params.id)
-	
-	res.sendFile(path.join(__dirname + '/index.html'))
-})
 
-app.post('/', function (req, res) {
-	Info.find(req.body, function(err, info) {
+app.get('/home/data/:id', function (req, res) {
+	var json = {};
+	json .identificationStr = req.params.id;
+
+	Info.find(json, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(analysis.basics(info));
 	});
 })
 
-app.post('/list', function (req, res) {
-	Info.find(req.body, function(err, info) {
+app.post('/home/data', function(req, res) {
+   	var insert = new Info(req.body);
+	insert.save(function(err, info) {
+	 	if (err)
+	 		res.send(JSON.stringify(err));
+	 		res.json(JSON.stringify(info));
+	});
+})
+
+app.get('/home/details/:id', function (req, res) {
+	var json = {};
+	json .identificationStr = req.params.id;
+
+	Info.find(json, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(analysis.list(info));
 	});
 })
 
-app.get('/raw', function (req, res) {
+app.get('/home/data/raw', function (req, res) {
 	Info.find({"identificationStr": "agoubinPRD"}, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(info);
 	});
 })
-
-app.get('/report', function (req, res) {
+app.get('/home/data/report', function (req, res) {
 	Info.aggregate( [ {"$group" : {_id:"$identificationStr", count:{$sum:1}}} ], 
 		function(err, info) {
 			if(err)
@@ -95,21 +105,11 @@ app.get('/report', function (req, res) {
 				
 		})
 })
-
-app.get('/rmTest', function (req, res) {
+app.get('/home/data/rmTest', function (req, res) {
 	Info.deleteMany({identificationStr: "test"}, function(err, info) {
 		if (err)
 			res.send(JSON.stringify(err));
 			res.send(JSON.stringify(info));
-	});
-})
-
-app.post('/data', function(req, res) {
-   	var insert = new Info(req.body);
-	insert.save(function(err, info) {
-	 	if (err)
-	 		res.send(JSON.stringify(err));
-	 		res.json(JSON.stringify(info));
 	});
 })
 
