@@ -8,7 +8,68 @@ module.exports = {
 	list: function (e) {
 		return e;
 	},
-	basics: function (e) {
+
+	// to update : YTD, MTD, Today, Quotas & ∆ 
+
+    // {
+    //     "_id": "5e0daa0f703f7856f6016cff",
+    //     "description": "Salaire Janvier",
+    //     "amount": 2240.31,
+    //     "category": "Revenue",
+    //     "identificationStr": "agoubinPRD",
+    //     "date": "2020-01-01T00:00:00.000Z",
+    //     "__v": 0
+    // },
+    // {
+    //     "_id": "5e0daa25703f7856f6016d00",
+    //     "description": "RATP",
+    //     "amount": 75.2,
+    //     "category": "Obligations",
+    //     "identificationStr": "agoubinPRD",
+    //     "date": "2020-01-01T00:00:00.000Z",
+    //     "__v": 0
+    // }
+
+    current: function (db, res) {
+		var date = new Date();
+
+		date.setMonth(0);
+		date.setDate(0);
+		date.setHours(23,59,59,999);
+
+		db.aggregate( [
+						{
+							$match: {
+									date: {
+											$gte: date
+										},
+									identificationStr: "agoubinPRD"
+								}
+						},
+						{
+							$group: {
+									_id: {
+											identificationStr: "$identificationStr",
+											category: "$category",
+										},
+									amount: {
+											$sum:"$amount"
+										},
+									category: {
+											$first:"$category"
+										}
+								}
+						}
+					], 
+			function(err, info) {
+				if(err)
+					res.send(err)
+				res.send(info)
+					
+			})
+    },
+
+	basics: function (e, data) {
 		var res = {};
 		var temp = {};
 

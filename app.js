@@ -47,17 +47,19 @@ var Info = mongoose.model('Info', InfoSchema);
 // ------------------------------------------------------------------------
 
 // Endpoints
+
+// Info ------------------------
 app.get('/', function(req, res) {
 	res.send('C Live ! <br>' + 
 		' <a href="/home">go to /home</>'
 		)
 })
 
+// PRD ------------------------
 app.get('/home', function(req, res) {
 
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
-
 app.get('/home/data/:id', function (req, res) {
 	var json = {};
 	json .identificationStr = req.params.id;
@@ -65,19 +67,9 @@ app.get('/home/data/:id', function (req, res) {
 	Info.find(json, function(err, info) {
 		if (err)
 			res.send(err);
-			res.json(analysis.basics(info));
+			res.json(analysis.basics(info, Info));
 	});
 })
-
-app.post('/home/data', function(req, res) {
-   	var insert = new Info(req.body);
-	insert.save(function(err, info) {
-	 	if (err)
-	 		res.send(JSON.stringify(err));
-	 		res.json(JSON.stringify(info));
-	});
-})
-
 app.get('/home/details/:id', function (req, res) {
 	var json = {};
 	json .identificationStr = req.params.id;
@@ -88,15 +80,24 @@ app.get('/home/details/:id', function (req, res) {
 			res.json(analysis.list(info));
 	});
 })
+app.post('/home/data', function(req, res) {
+   	var insert = new Info(req.body);
+	insert.save(function(err, info) {
+	 	if (err)
+	 		res.send(JSON.stringify(err));
+	 		res.json(JSON.stringify(info));
+	});
+})
 
-app.get('/home/data/raw', function (req, res) {
-	Info.find({"identificationStr": "agoubinPRD"}, function(err, info) {
+// Test ------------------------
+app.get('/data/raw', function (req, res) {
+	Info.find({}, function(err, info) {
 		if (err)
 			res.send(err);
 			res.json(info);
 	});
 })
-app.get('/home/data/report', function (req, res) {
+app.get('/data/report', function (req, res) {
 	Info.aggregate( [ {"$group" : {_id:"$identificationStr", count:{$sum:1}}} ], 
 		function(err, info) {
 			if(err)
@@ -111,6 +112,13 @@ app.get('/home/data/rmTest', function (req, res) {
 			res.send(JSON.stringify(err));
 			res.send(JSON.stringify(info));
 	});
+})
+
+// DEV` ------------------------
+app.get('/home/test', function (req, res) {
+	var json = {};
+
+	analysis.current(Info, res);
 })
 
 // ------------------------------------------------------------------------
