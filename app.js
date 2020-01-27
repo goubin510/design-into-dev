@@ -61,14 +61,9 @@ app.get('/home', function(req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'))
 })
 app.get('/home/data/:id', function (req, res) {
-	var json = {};
-	json .identificationStr = req.params.id;
 
-	Info.find(json, function(err, info) {
-		if (err)
-			res.send(err);
-			res.json(analysis.basics(info, Info));
-	});
+	analysis.current(Info, res, req.params.id);
+	
 })
 app.get('/home/details/:id', function (req, res) {
 	var json = {};

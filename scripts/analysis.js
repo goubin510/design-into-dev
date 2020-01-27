@@ -30,20 +30,30 @@ module.exports = {
     //     "__v": 0
     // }
 
-    current: function (db, res) {
-		var date = new Date();
+    current: function (db, res, identifiant) {
+		var dateY = new Date();
+		var dateM = new Date();
+		var dateT = new Date();
 
-		date.setMonth(0);
-		date.setDate(0);
-		date.setHours(23,59,59,999);
+		var json = {};
+		var YTD = false, MTD = false, TD = false;
+
+		dateY.setMonth(0);
+		dateY.setDate(0);
+		dateY.setHours(23,59,59,999);
+
+		dateM.setDate(0);
+		dateM.setHours(23,59,59,999);
+
+		dateT.setHours(00,00,00,000);
 
 		db.aggregate( [
 						{
 							$match: {
 									date: {
-											$gte: date
+											$gte: dateY
 										},
-									identificationStr: "agoubinPRD"
+									identificationStr: identifiant
 								}
 						},
 						{
@@ -64,8 +74,79 @@ module.exports = {
 			function(err, info) {
 				if(err)
 					res.send(err)
-				res.send(info)
-					
+				YTD = true;
+				json.ytd = info;
+
+				if(YTD && MTD && TD)
+					reply(res, json)
+			})
+
+		db.aggregate( [
+						{
+							$match: {
+									date: {
+											$gte: dateM
+										},
+									identificationStr: identifiant
+								}
+						},
+						{
+							$group: {
+									_id: {
+											identificationStr: "$identificationStr",
+											category: "$category",
+										},
+									amount: {
+											$sum:"$amount"
+										},
+									category: {
+											$first:"$category"
+										}
+								}
+						}
+					], 
+			function(err, info) {
+				if(err)
+					res.send(err)
+				MTD = true;
+				json.mtd = info;
+
+				if(YTD && MTD && TD)
+					reply(res, json)
+			})
+
+		db.aggregate( [
+						{
+							$match: {
+									date: {
+											$gte: dateT
+										},
+									identificationStr: identifiant
+								}
+						},
+						{
+							$group: {
+									_id: {
+											identificationStr: "$identificationStr",
+											category: "$category",
+										},
+									amount: {
+											$sum:"$amount"
+										},
+									category: {
+											$first:"$category"
+										}
+								}
+						}
+					], 
+			function(err, info) {
+				if(err)
+					res.send(err)
+				TD = true;
+				json.td = info;
+
+				if(YTD && MTD && TD)
+					reply(res, json)
 			})
     },
 
@@ -156,7 +237,9 @@ function isValuable (e) {
 
 }
 
-
+function reply (res, e) {
+	res.send(e)
+}
 
 
 
