@@ -121,7 +121,10 @@
 <body ng-app="myApp" ng-controller="myCtrl">
 <!-- ___________________________HEADER___________________________ -->
 	<div class="row">
-		<h1 class="col">Save my Money !</h1>
+		<div class="col">
+			<h1>Save my Money !</h1>
+			<p>Lorem Ipsum</p>
+		</div>
 	</div>
 
 <!-- ___________________________OVERLAY___________________________ -->
@@ -168,15 +171,6 @@
 	</div>
 
 <!-- ___________________________RESULT___________________________ -->
-	<div class="row analysis">
-		<div class="col-1"></div>
-		<div class="col">
-			<button class="btn info" onclick="openMod()">Add Data</button>
-			<h2>Results :</h2>
-
-		</div>	
-		<div class="col"></div>
-	</div>
 	<div>
 		<div class="col-1"></div>
 		<div class="col">
@@ -191,33 +185,59 @@
 					</tr>
 					<tr>
 						<th>Revenue</th>
-						<td>{{spentData.previous.Revenue | number: 2}}</td>
-						<td>{{spentData.previous.Revenue | number: 2}}</td>
-						<td>{{spentData.today.Revenue | number: 2}}</td>
-						<td>{{spentData.today.Revenue | number: 2}}</td>
+						<td>
+							<h5>{{current.ytd.Revenue | number: 2}}</h5>
+						</td>
+						<td>
+							<h5>{{current.mtd.Revenue | number: 2}}</h5>
+						</td>
+						<td>
+							<h5>{{current.td.Revenue | number: 2}}</h5>
+						</td>
+						<td>
+							<h5>{{current.mtd.Revenue - current.mtd.Obligations - current.mtd.Loisirs - current.mtd.Epargne | number: 2}}</h5>
+						</td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<th>Obligations</th>
-						<td>{{spentData.previous.Obligations | number: 2}}</td>
-						<td>{{spentData.previous.Obligations | number: 2}}</td>
-						<td>{{spentData.today.Obligations | number: 2}}</td>
-						<td>{{spentData.today.Obligations | number: 2}}</td>
+						<td>
+							<h5>{{current.ytd.Obligations | number: 2}}<small>/{{current.ytd.Revenue * 0.5 | number: 2}}</small></h5>
+						</td>
+						<td>
+							<h5>{{current.mtd.Obligations | number: 2}}<small>/{{current.mtd.Revenue * 0.5 | number: 2}}</small></h5>
+						</td>
+						<td>
+							<h5>{{current.td.Obligations | number: 2}}<small>/{{current.td.Quotas * 0.5 - current.mtd.Obligations / 31 | number: 2}}</small></h5>
+						</td>
+						<td>...</td>
 					</tr>
 					<tr>
 						<th>Loisirs</th>
-						<td>Moe</td>
-						<td>mary@example.com</td>
-						<td>mary@example.com</td>
-						<td>mary@example.com</td>
+						<td>
+							<h5>{{current.ytd.Loisirs | number: 2}}<small>/{{current.ytd.Revenue * 0.3 | number: 2}}</small></h5>
+						</td>
+						<td>
+							<h5>{{current.mtd.Loisirs | number: 2}}<small>/{{current.mtd.Revenue * 0.3 | number: 2}}</small></h5>
+						</td>
+						<td>
+							<h5>{{current.td.Loisirs | number: 2}}<small>/{{current.td.Quotas * 0.3 - current.mtd.Loisirs / 31 | number: 2}}</small></h5>
+						</td>
+						<td>...</td>
 					</tr>
 					<tr>
 						<th>Epargne</th>
-						<td>Moe</td>
-						<td>mary@example.com</td>
-						<td>mary@example.com</td>
-						<td>mary@example.com</td>
+						<td>
+							<h5>{{current.ytd.Epargne | number: 2}}<small>/{{current.ytd.Revenue * 0.2 | number: 2}}</small></h5>
+						</td>
+						<td>
+							<h5>{{current.mtd.Epargne | number: 2}}<small>/{{current.mtd.Revenue * 0.2 | number: 2}}</small></h5>
+						</td>
+						<td>
+							<h5>{{current.td.Epargne | number: 2}}<small>/{{current.td.Quotas * 0.2 - current.mtd.Epargne / 31 | number: 2}}</small></h5>
+						</td>
+						<td>...</td>
 					</tr>
 				</tbody>
 			</table>
@@ -227,7 +247,8 @@
 
 <!-- ___________________________ACTION___________________________ -->
 	<div class="row analysisBis">
-		<div class="col-2">
+		<div class="col">
+			<button class="btn info" onclick="openMod()">Add Data</button>
 			<button class="btn btn-warning" id="work" ng-click="loadList()">
 				Run Analysis
 			</button>
@@ -300,7 +321,7 @@
 	var app = angular.module('myApp', []);
 
 	app.controller('myCtrl', function($scope, $http) {
-			$scope.spentData = "init..."
+			$scope.current = "loading..."
 			$scope.detailsList = ["init..."]
 
 			$http({
@@ -308,8 +329,8 @@
 					url : "/home/data/" + urlParams.get("id")
 				})
 				.then(function(response) {
-					$scope.spentData = response.data;
-					console.log(response)
+					$scope.current = treat(response.data);
+					console.log(treat(response.data));
 			});
 
 			$scope.loadList = function() {
@@ -341,6 +362,27 @@
 	$("#send").click(function(){
 		postData();
 	});
+
+	function treat (e) {
+		var json = {}
+		json.ytd = {}
+		json.mtd = {}
+		json.td = {}
+
+		for (var i = 0; i < e.ytd.length; i++) {
+			json.ytd[e.ytd[i].category] = e.ytd[i].amount;
+		}
+		for (var i = 0; i < e.mtd.length; i++) {
+			json.mtd[e.mtd[i].category] = e.mtd[i].amount;
+		}
+		for (var i = 0; i < e.td.length; i++) {
+			json.td[e.td[i].category] = e.td[i].amount;
+		}
+
+		json.td.Quotas = decimaux(json.mtd.Revenue / 31);
+
+		return json;
+	}
 
 	function loadChart (e) {
 		var composite = {};
