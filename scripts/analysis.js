@@ -31,27 +31,33 @@ module.exports = {
     // }
 
     current: function (db, res, identifiant) {
-		var dateY = new Date();
-		var dateM = new Date();
-		var dateT = new Date();
+		var dateYTD = new Date();
+		var dateMTD = new Date();
+		var dateTD = new Date();
+		var dateEnd = new Date();
 
 		var json = {};
 		var YTD = false, MTD = false, TD = false;
 
-		dateY.setMonth(0);
-		dateY.setDate(0);
-		dateY.setHours(23,59,59,999);
+		dateYTD.setMonth(0);
+		dateYTD.setDate(0);
+		dateYTD.setHours(23,59,59,999);
 
-		dateM.setDate(0);
-		dateM.setHours(23,59,59,999);
+		dateMTD.setDate(0);
+		dateMTD.setHours(23,59,59,999);
 
-		dateT.setHours(00,00,00,000);
+		dateTD.setHours(00,00,00,000);
+
+		dateEnd.setDate(0);
+		dateEnd.setHours(23,59,59,999);
+		dateEnd.setMonth(dateEnd.getMonth() + 1);
 
 		db.aggregate( [
 						{
 							$match: {
 									date: {
-											$gte: dateY
+											$gte: dateYTD,
+											$lte: dateEnd
 										},
 									identificationStr: identifiant
 								}
@@ -85,7 +91,8 @@ module.exports = {
 						{
 							$match: {
 									date: {
-											$gte: dateM
+											$gte: dateMTD,
+											$lte: dateEnd
 										},
 									identificationStr: identifiant
 								}
@@ -119,7 +126,8 @@ module.exports = {
 						{
 							$match: {
 									date: {
-											$gte: dateT
+											$gte: dateTD,
+											$lte: dateEnd
 										},
 									identificationStr: identifiant
 								}
