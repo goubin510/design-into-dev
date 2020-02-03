@@ -48,10 +48,6 @@ module.exports = {
 
 		dateTD.setHours(00,00,00,000);
 
-		dateEnd.setDate(0);
-		dateEnd.setHours(23,59,59,999);
-		dateEnd.setMonth(dateEnd.getMonth() + 1);
-
 		db.aggregate( [
 						{
 							$match: {
