@@ -66,14 +66,14 @@ app.get('/home/data/:id', function (req, res) {
 	
 })
 app.get('/home/details/:id', function (req, res) {
-	var json = {};
-	json .identificationStr = req.params.id;
+	
+	analysis.list(Info, res, req.params.id)
 
-	Info.find(json, function(err, info) {
-		if (err)
-			res.send(err);
-			res.json(analysis.list(info));
-	});
+})
+app.get('/home/csv/:id/:month', function (req, res) {
+	
+	analysis.csv(Info, res, req.params.id, req.params.month)
+
 })
 app.post('/home/data', function(req, res) {
    	var insert = new Info(req.body);

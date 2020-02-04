@@ -5,11 +5,52 @@ module.exports = {
 	bar: function (e) {
 		console.log("e", e)
 	},
-	list: function (e) {
-		return e;
-	},
+	list: function (db, res, identifiant) {
+		var dateMTD = new Date();
+		var dateRef = new Date();
+		var json = {}
 
-	// to update : YTD, MTD, Today, Quotas & ∆ 
+		dateMTD.setDate(0);
+		dateMTD.setHours(23,59,59,999);
+
+		db.find({
+					date: {
+							$gte: dateMTD,
+							$lte: dateRef,
+						},
+					identificationStr: identifiant
+				},
+			function(err, info) {
+				if (err)
+					reply(res, err);
+					replyJSON(res, info);
+				}
+		);
+	},
+	csv: function (db, res, identifiant, month) {
+		var dateMTD = new Date();
+
+		dateMTD.setDate(1)
+		dateMTD.setHours(0,0,0,0)
+		dateMTD.setMonth(month)
+
+		var dateRef = new Date(dateMTD);
+		dateRef.setMonth(month + 1)
+
+		db.find({
+					date: {
+							$gte: dateMTD,
+							$lt: dateRef,
+						},
+					identificationStr: identifiant
+				},
+			function(err, info) {
+				if (err)
+					reply(res, err);
+					replyCSV(res, info);
+				}
+		);
+	},
 
     // {
     //     "_id": "5e0daa0f703f7856f6016cff",
@@ -18,17 +59,9 @@ module.exports = {
     //     "category": "Revenue",
     //     "identificationStr": "agoubinPRD",
     //     "date": "2020-01-01T00:00:00.000Z",
+   	//	   "amex": true
     //     "__v": 0
     // },
-    // {
-    //     "_id": "5e0daa25703f7856f6016d00",
-    //     "description": "RATP",
-    //     "amount": 75.2,
-    //     "category": "Obligations",
-    //     "identificationStr": "agoubinPRD",
-    //     "date": "2020-01-01T00:00:00.000Z",
-    //     "__v": 0
-    // }
 
     current: function (db, res, identifiant) {
 		var dateYTD = new Date();
@@ -75,13 +108,14 @@ module.exports = {
 					], 
 			function(err, info) {
 				if(err)
-					res.send(err)
+					reply(res, err)
 				YTD = true;
 				json.ytd = info;
 
 				if(YTD && MTD && TD)
 					reply(res, json)
-			})
+			}
+		)
 
 		db.aggregate( [
 						{
@@ -110,7 +144,7 @@ module.exports = {
 					], 
 			function(err, info) {
 				if(err)
-					res.send(err)
+					reply(res, err)
 				MTD = true;
 				json.mtd = info;
 
@@ -145,7 +179,7 @@ module.exports = {
 					], 
 			function(err, info) {
 				if(err)
-					res.send(err)
+					reply(res, err)
 				TD = true;
 				json.td = info;
 
@@ -245,8 +279,39 @@ function reply (res, e) {
 	res.send(e)
 }
 
+function replyJSON (res, e) {
+	res.json(e)
+}
+
+function replyCSV (res, e) {
+
+	var str = '';
+
+	str += '_id;description;amount;category;identificationStr;date;amex;__v\n';
+
+	for (var i = 0; i < e.length; i++) {
+		str += e[i]["_id"] + ";";
+		str += e[i].description + ";"
+		str += e[i].amount + ";"
+		str += e[i].category + ";"
+		str += e[i].identificationStr + ";"
+		str += e[i].date + ";"
+		str += e[i].amex + ";"
+		str += e[i]["__v"] + "\n"
+	}
+
+	res.send(str)
+}
 
 
+    //     "_id": "5e0daa0f703f7856f6016cff",
+    //     "description": "Salaire Janvier",
+    //     "amount": 2240.31,
+    //     "category": "Revenue",
+    //     "identificationStr": "agoubinPRD",
+    //     "date": "2020-01-01T00:00:00.000Z",
+   	//	   "amex": true
+    //     "__v": 0
 
 
 

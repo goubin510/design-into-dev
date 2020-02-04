@@ -122,7 +122,7 @@
 <!-- ___________________________HEADER___________________________ -->
 	<div class="row">
 		<div class="col">
-			<h1>Save my Money !</h1>
+			<h1>Status</h1>
 			<p>Lorem Ipsum</p>
 		</div>
 	</div>
@@ -196,6 +196,7 @@
 						</td>
 						<td>
 							<h5>{{current.mtd.Revenue - current.mtd.Obligations - current.mtd.Loisirs - current.mtd.Epargne | number: 2}}</h5>
+							<small>/{{current.ytd.Revenue - current.ytd.Obligations - current.ytd.Loisirs - current.ytd.Epargne | number: 2}}</small>
 						</td>
 					</tr>
 				</thead>
